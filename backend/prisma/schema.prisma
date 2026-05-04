@@ -17,3 +17,30 @@ model User {
   otpExpiresAt  DateTime?
   createdAt     DateTime @default(now())
 }
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique // e.g., "Shirts", "Shoes"
+  products Product[]
+}
+
+model Product {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String?
+  basePrice   Float
+  categoryId  Int
+  category    Category         @relation(fields: [categoryId], references: [id])
+  variants    ProductVariant[]
+  createdAt   DateTime         @default(now())
+}
+
+model ProductVariant {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      String? // e.g., "M", "42"
+  color     String? // e.g., "Black", "Red"
+  stock     Int     @default(0)
+  price     Float?  // Optional: in case a specific variant costs more
+}
