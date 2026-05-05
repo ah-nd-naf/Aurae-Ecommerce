@@ -1,10 +1,12 @@
 require('dotenv').config();
 const express = require("express");
+const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 
+app.use(cors()); // Allow requests from the frontend
 app.use(express.json()); // Allows us to read JSON data sent to the server
 
 // Mount authentication routes
