@@ -46,9 +46,10 @@ const Signup = () => {
       {/* Left Column - Image & Overlay */}
       <div className="hidden lg:flex w-1/2 relative bg-neutral-100">
         <img
-          src="https://images.unsplash.com/photo-1550614000-4b95d4ebf04f?auto=format&fit=crop&q=80&w=1200"
-          alt="Fashion Model"
+          src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1200"
+          alt="Aurae Editorial Signup"
           className="absolute inset-0 w-full h-full object-cover"
+          loading='lazy'
         />
         <div className="absolute inset-0 bg-black/20" /> {/* Subtle overlay */}
         

@@ -49,9 +49,10 @@ const Login = () => {
       {/* Left Column - Image & Overlay */}
       <div className="hidden lg:flex w-1/2 relative bg-neutral-100">
         <img
-          src="https://images.unsplash.com/photo-1550614000-4b95d4ebf04f?auto=format&fit=crop&q=80&w=1200"
-          alt="Fashion Model"
-          className="absolute inset-0 w-full h-full object-cover"
+          src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200"
+          alt="Aurae Editorial Login"
+          className="absolute inset-0 w-full h-full object-cover object-full"
+          loading='lazy'
         />
         <div className="absolute inset-0 bg-black/20" />
         
