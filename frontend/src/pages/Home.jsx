@@ -3,14 +3,14 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../api/axios';
 
 const Home = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // This hits your backend route: http://localhost:5000/api/products/all
+        // Fetching your shirts, shoes, and pants from the Postgres DB
         const response = await api.get('/products/all');
         setProducts(response.data);
       } catch (err) {
@@ -25,54 +25,69 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Simple Temporary Header */}
-      <nav className="flex justify-between items-center px-8 py-6 border-b border-gray-100">
-        <h1 className="text-2xl font-serif tracking-widest uppercase">AURAE</h1>
-        <div className="flex items-center gap-6">
-          <span className="text-[10px] uppercase tracking-widest text-gray-400">
-            Welcome, {user?.email}
-          </span>
-          <button 
-            onClick={logout}
-            className="text-[10px] uppercase tracking-widest font-bold hover:text-red-600 transition-colors"
-          >
-            Logout
+      {/* 1. Hero Section - The Brand Statement */}
+      <section className="relative h-[60vh] w-full bg-neutral-900 overflow-hidden">
+        <img 
+          src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=2000" 
+          alt="Aurae Collection"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
+        />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-6">
+          <h2 className="text-[10px] uppercase tracking-[0.5em] mb-4">New Arrivals</h2>
+          <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-center">Essential Aesthetics</h1>
+          <button className="mt-8 px-8 py-3 border border-white text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+            Explore Collection
           </button>
         </div>
-      </nav>
+      </section>
 
-      {/* Hero Section */}
-      <header className="px-8 py-16 text-center">
-        <h2 className="text-5xl font-serif text-gray-900 mb-4">The Collection</h2>
-        <p className="text-gray-500 font-light italic">Timeless pieces for the modern individual.</p>
-      </header>
+      {/* 2. Product Grid Section */}
+      <main className="max-w-7xl mx-auto px-8 py-20">
+        <div className="flex justify-between items-end mb-12">
+          <div>
+            <h2 className="text-2xl font-serif text-gray-900">The Catalog</h2>
+            <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Quality Over Quantity</p>
+          </div>
+          <div className="text-[10px] text-gray-400 uppercase tracking-widest">
+            {products.length} Products Found
+          </div>
+        </div>
 
-      {/* Product Grid */}
-      <main className="max-w-7xl mx-auto px-8 pb-24">
         {loading ? (
-          <div className="text-center py-20 uppercase tracking-[0.2em] text-xs text-gray-400">Loading Collection...</div>
+          <div className="flex justify-center items-center h-64">
+            <span className="text-[10px] uppercase tracking-[0.3em] animate-pulse">Loading Collection...</span>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
             {products.map((product) => (
-              <div key={product.id} className="group cursor-pointer">
-                <div className="aspect-[3/4] bg-neutral-100 mb-6 overflow-hidden relative">
-                  {/* Placeholder for images since we haven't added them to DB yet */}
-                  <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400 group-hover:scale-110 transition-transform duration-500">
+              <div key={product.id} className="group">
+                {/* Product Image Placeholder */}
+                <div className="aspect-[3/4] bg-neutral-100 mb-6 overflow-hidden relative cursor-pointer">
+                  <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400 group-hover:scale-110 transition-transform duration-700">
                     {product.name}
                   </div>
+                  {/* Overlay for quick view */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                 </div>
+
+                {/* Product Info */}
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider">{product.name}</h3>
-                    <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">{product.category?.name}</p>
+                    <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-900">{product.name}</h3>
+                    <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest">{product.category?.name || 'Essentials'}</p>
                   </div>
-                  <p className="text-sm font-serif text-gray-900">${product.basePrice}</p>
+                  <span className="text-sm font-serif text-gray-900">${product.basePrice}</span>
                 </div>
               </div>
             ))}
           </div>
         )}
       </main>
+
+      {/* 3. Footer Branding */}
+      <footer className="border-t border-gray-100 py-12 text-center">
+        <p className="text-[10px] text-gray-400 uppercase tracking-[0.4em]">© 2026 AURAE — Timeless Minimalism</p>
+      </footer>
     </div>
   );
 };
