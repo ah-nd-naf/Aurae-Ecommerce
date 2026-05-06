@@ -48,4 +48,31 @@ const getProducts = async (req, res) => {
     }
 };
 
-module.exports = { createProduct, getProducts };
+// Fetch specific product by ID using Prisma
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Prisma findUnique is much cleaner than raw SQL!
+    const product = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id), // Ensure the ID is a number
+      },
+      include: {
+        variants: true, // Include the different sizes/colors
+        category: true  // Include the category name (Shirts, Shoes, etc.)
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error in getProductById:", error);
+    res.status(500).json({ error: "Server error fetching product details" });
+  }
+};
+
+module.exports = { createProduct, getProducts, getProductById };

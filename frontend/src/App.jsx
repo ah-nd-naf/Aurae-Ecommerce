@@ -7,6 +7,7 @@ import Signup from './pages/Signup';
 import VerifyOTP from './pages/VerifyOTP';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import ProductDetail from './pages/ProductDetail';
 
 // Component Imports
 import Navbar from './components/Navbar';
@@ -40,6 +41,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
         {/* Main Shop Destination */}
         <Route path="/home" element={<Home />} />
