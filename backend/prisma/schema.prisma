@@ -29,6 +29,7 @@ model Product {
   name        String
   description String?
   basePrice   Float
+  imageUrl    String?
   categoryId  Int
   category    Category         @relation(fields: [categoryId], references: [id])
   variants    ProductVariant[]
