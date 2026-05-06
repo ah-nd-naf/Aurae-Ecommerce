@@ -45,7 +45,9 @@ const Home = () => {
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-6">
           <h2 className="text-[10px] uppercase tracking-[0.5em] mb-4">New Arrivals</h2>
           <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-center">Essential Aesthetics</h1>
-          <button className="mt-8 px-8 py-3 border border-white text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+          <button 
+          onClick={() => document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' })}
+          className="mt-8 px-8 py-3 border border-white text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
             Explore Collection
           </button>
         </div>
@@ -54,7 +56,7 @@ const Home = () => {
       {/* 2. PRODUCT GRID SECTION 
           The main shop catalog displaying dynamic products from the DB.
       */}
-      <main className="max-w-7xl mx-auto px-8 py-20">
+      <main id="catalog" className="max-w-7xl mx-auto px-8 py-20">
         
         {/* Catalog Header Info */}
         <div className="flex justify-between items-end mb-12">
