@@ -84,11 +84,19 @@ const Home = () => {
                 className="group cursor-pointer"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
-                {/* Product Image Placeholder with Hover Effects */}
+                {/* Product Image with Hover Effects */}
                 <div className="aspect-[3/4] bg-neutral-100 mb-6 overflow-hidden relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400 group-hover:scale-110 transition-transform duration-700">
-                    {product.name}
-                  </div>
+                  {product.imageUrl ? (
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400 group-hover:scale-110 transition-transform duration-700">
+                      {product.name}
+                    </div>
+                  )}
                   {/* Subtle dark overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                 </div>
