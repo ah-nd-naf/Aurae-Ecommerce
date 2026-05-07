@@ -1,3 +1,4 @@
+import { useCart } from "../context/CartContext";
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -7,6 +8,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
   
   // --- Variant Selection State ---
   const [selectedSize, setSelectedSize] = useState(null);
@@ -117,7 +119,8 @@ const ProductDetail = () => {
             </div>
 
             {/* Add to Bag Action */}
-            <button className="w-full bg-[#4A5D4E] text-white py-4 text-[11px] uppercase tracking-[0.3em] hover:bg-[#3d4d41] transition-all duration-300">
+            <button onClick={() => addToCart(product, selectedSize, selectedColor)}
+            className="w-full bg-[#4A5D4E] text-white py-4 text-[11px] uppercase tracking-[0.3em] hover:bg-[#3d4d41] transition-all duration-300">
               Add to Bag
             </button>
           </div>
