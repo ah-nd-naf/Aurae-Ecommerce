@@ -15,6 +15,7 @@ model User {
   otp           String?  // To store the 6-digit code 
   otpExpiresAt  DateTime?
   createdAt     DateTime @default(now())
+  orders        Order[]
 }
 
 model Category {
@@ -33,6 +34,7 @@ model Product {
   category    Category         @relation(fields: [categoryId], references: [id])
   variants    ProductVariant[]
   createdAt   DateTime         @default(now())
+  orderItems  OrderItem[]
 }
 
 model ProductVariant {
@@ -43,4 +45,26 @@ model ProductVariant {
   color     String? // e.g., "Black", "Red"
   stock     Int     @default(0)
   price     Float?  // Optional: in case a specific variant costs more
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  userId          Int         // Changed to Int to match your User model
+  user            User        @relation(fields: [userId], references: [id])
+  totalAmount     Float
+  status          String      @default("PENDING")
+  createdAt       DateTime    @default(now())
+  orderItems      OrderItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int     // Changed to Int to match your Product model
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+  size      String
+  color     String
 }
