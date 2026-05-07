@@ -11,44 +11,32 @@ import ProductDetail from './pages/ProductDetail';
 
 // Component Imports
 import Navbar from './components/Navbar';
+import CartDrawer from './components/CartDrawer'; // Added this
 import './index.css';
 
 function App() {
-  // Access the global user state to determine if they are authenticated
   const { user } = useContext(AuthContext);
 
   return (
-    /**
-     * The wrapper div uses 'pt-20' to account for the height of the fixed Navbar.
-     * This ensures your Signup/Login/Home content starts below the menu bar.
-     */
     <div className="min-h-screen bg-white pt-20">
-      {/* Global Navigation Bar - appears on every page */}
+      {/* Global Navigation Bar */}
       <Navbar />
 
+      {/* Global Cart Drawer - It's outside Routes so it works on every page */}
+      <CartDrawer /> 
+
       <Routes>
-        {/* Root Route Logic: 
-          Check if user object exists in Context.
-          - Yes: Redirect to Shop (/home)
-          - No: Redirect to onboarding (/signup)
-        */}
         <Route 
           path="/" 
           element={user ? <Navigate to="/home" replace /> : <Navigate to="/signup" replace />} 
         />
         
-        {/* Authentication Flow Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/login" element={<Login />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-
-        {/* Main Shop Destination */}
         <Route path="/home" element={<Home />} />
 
-        {/* 404/Catch-all Route: 
-          If the user types a random URL, send them back to the start of the funnel.
-        */}
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
     </div>
