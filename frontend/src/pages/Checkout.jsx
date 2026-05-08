@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Checkout = () => {
-  const { cart, cartTotal, cartCount } = useCart();
+  const { cart, cartTotal, cartCount, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const handlePlaceOrder = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('aurae_token');
       const response = await axios.post('http://localhost:5000/api/orders', {
         items: cart,
         totalAmount: cartTotal
@@ -21,7 +21,7 @@ const Checkout = () => {
 
       if (response.status === 201) {
         alert("Order placed successfully!");
-        // We'll add cart clearing logic next
+        clearCart(); // clear cart after order placed
         navigate('/home');
       }
     } catch (error) {

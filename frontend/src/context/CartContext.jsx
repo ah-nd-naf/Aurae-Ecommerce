@@ -37,6 +37,11 @@ export const CartProvider = ({ children }) => {
     setCart(cart.filter(item => !(item.id === itemId && item.size === size && item.color === color)));
   };
 
+  // --- Logic: Clear Cart after Order ---
+  const clearCart = () => {
+    setCart([]);
+  };
+
   // --- Logic: Calculate Total Price ---
   const cartTotal = cart.reduce((sum, item) => sum + item.basePrice * item.quantity, 0);
   
@@ -48,7 +53,8 @@ export const CartProvider = ({ children }) => {
       cart, 
       addToCart, 
       removeFromCart, 
-      cartTotal, 
+      cartTotal,
+      clearCart,
       cartCount, 
       isCartOpen, 
       setIsCartOpen 

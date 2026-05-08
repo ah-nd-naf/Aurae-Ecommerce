@@ -29,11 +29,9 @@ const Login = () => {
         password: formData.password
       });
       
-      // Save user data and token to global state and localStorage
-      login({
-        token: response.data.token,
-        user: response.data.user
-      });
+      // UPDATED: Save user data and token as separate arguments
+      // This matches the new (userData, token) => { ... } signature in AuthContext
+      login(response.data.user, response.data.token);
       
       // Redirect to the shop home page
       navigate('/home'); 

@@ -15,14 +15,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
+  const login = (userData, token) => { // Accept token as a second argument
     setUser(userData);
     localStorage.setItem('aurae_user', JSON.stringify(userData));
+    localStorage.setItem('aurae_token', token); // Store token in localStorage
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('aurae_user');
+    localStorage.removeItem('aurae_token'); // Remove token from localStorage
   };
 
   return (
