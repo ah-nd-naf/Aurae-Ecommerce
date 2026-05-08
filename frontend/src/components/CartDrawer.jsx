@@ -1,9 +1,11 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { X, Minus, Plus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CartDrawer = () => {
   const { cart, removeFromCart, cartTotal, isCartOpen, setIsCartOpen, addToCart } = useCart();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -80,7 +82,12 @@ const CartDrawer = () => {
                 <span className="text-[10px] uppercase tracking-widest">Subtotal</span>
                 <span className="text-sm font-medium">${cartTotal.toFixed(2)}</span>
               </div>
-              <button className="w-full bg-black text-white py-4 text-[10px] uppercase tracking-[0.3em] hover:bg-gray-900 transition-colors">
+              <button
+              onClick={() => {
+                setIsCartOpen(false);
+                navigate('/checkout');
+              }} 
+              className="w-full bg-black text-white py-4 text-[10px] uppercase tracking-[0.3em] hover:bg-gray-900 transition-colors">
                 Begin Checkout
               </button>
               <p className="text-[8px] text-gray-400 mt-4 text-center uppercase tracking-widest">

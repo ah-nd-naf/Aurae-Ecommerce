@@ -8,6 +8,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
+import Checkout from './pages/Checkout';
 
 // Component Imports
 import Navbar from './components/Navbar';
@@ -28,7 +29,7 @@ function App() {
       <Routes>
         <Route 
           path="/" 
-          element={user ? <Navigate to="/home" replace /> : <Navigate to="/signup" replace />} 
+          element={user ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} 
         />
         
         <Route path="/signup" element={<Signup />} />
@@ -36,6 +37,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/checkout" element={<Checkout />} />
 
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>

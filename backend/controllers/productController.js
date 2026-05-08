@@ -1,4 +1,4 @@
-const prisma = require('../config/db');
+import prisma from '../config/db.js';
 
 // Create the products
 const createProduct = async (req, res) => {
@@ -75,4 +75,4 @@ const getProductById = async (req, res) => {
   }
 };
 
-module.exports = { createProduct, getProducts, getProductById };
+export { createProduct, getProducts, getProductById };

@@ -1,4 +1,4 @@
-const https = require('https');
+import https from 'https';
 
 const urls = [
   "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=1000",

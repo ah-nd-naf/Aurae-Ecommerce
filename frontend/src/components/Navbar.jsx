@@ -1,11 +1,19 @@
 import React from 'react';
 import { ShoppingBag, User, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // Import the hook
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
-  // Access the count and the function to open the drawer
   const { cartCount, setIsCartOpen } = useCart();
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-gray-100">
@@ -25,7 +33,15 @@ const Navbar = () => {
         {/* Right: Action Icons */}
         <div className="flex items-center gap-6">
           <Search size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
-          <User size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
+          {user ? (
+            <button onClick={handleLogout} className="text-[10px] uppercase tracking-widest hover:text-gray-500 transition-colors">
+              Logout
+            </button>
+          ) : (
+            <Link to="/login">
+              <User size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
+            </Link>
+          )}
           
           {/* Cart Icon with Dynamic Badge */}
           <button 
