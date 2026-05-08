@@ -14,6 +14,7 @@ import Checkout from './pages/Checkout';
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer'; // Added this
 import './index.css';
+import ProtectedRoute from './components/ProtecedRoute';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -37,7 +38,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout"
+         element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+         }
+        />
 
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
