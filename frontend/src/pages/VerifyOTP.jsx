@@ -52,7 +52,7 @@ const VerifyOTP = () => {
       {/* Left Column - Image & Overlay */}
       <div className="hidden lg:flex w-1/2 relative bg-neutral-100">
         <img
-          src="https://images.unsplash.com/photo-1550614000-4b95d4ebf04f?auto=format&fit=crop&q=80&w=1200"
+          src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=800&auto=format&fit=crop"
           alt="Fashion Model"
           className="absolute inset-0 w-full h-full object-cover"
         />
