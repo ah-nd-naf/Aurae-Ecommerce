@@ -41,3 +41,30 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to create order", error: error.message });
   }
 };
+
+// --- Logic: Fetch all orders for the logged-in user ---
+
+export const getUserOrders = async (req, res) => {
+  try {
+    // Get the ID from the protect middleware
+    const userId = req.user.id || req.user.userId;
+
+    // Fetch the orders
+    const orders = await prisma.order.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        orderItems: true, // Return items with the order
+      },
+      orderBy: {
+        createdAt: 'desc' // Newest orders first
+      },
+    });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+  }
+};
