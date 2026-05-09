@@ -55,7 +55,11 @@ export const getUserOrders = async (req, res) => {
         userId: userId,
       },
       include: {
-        orderItems: true, // Return items with the order
+        orderItems: {
+          include: {
+            product: true, // Return product details including image
+          }
+        }
       },
       orderBy: {
         createdAt: 'desc' // Newest orders first

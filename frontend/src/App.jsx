@@ -9,12 +9,12 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
-
+import Orders from './pages/Orders';
 // Component Imports
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer'; // Added this
 import './index.css';
-import ProtectedRoute from './components/ProtecedRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -42,6 +42,13 @@ function App() {
          element={
           <ProtectedRoute>
             <Checkout />
+          </ProtectedRoute>
+         }
+        />
+        <Route path="/orders"
+         element={
+          <ProtectedRoute>
+            <Orders />
           </ProtectedRoute>
          }
         />

@@ -23,6 +23,9 @@ const Navbar = () => {
         <div className="flex gap-8 items-center">
           <Link to="/home" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Shop</Link>
           <span className="text-[10px] uppercase tracking-[0.3em] font-medium cursor-pointer hover:text-gray-500 transition-colors">Collections</span>
+          {user && (
+            <Link to="/orders" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Orders</Link>
+          )}
         </div>
 
         {/* Center: Brand Logo */}
