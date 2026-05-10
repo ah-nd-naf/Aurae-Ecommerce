@@ -1,7 +1,7 @@
 import React from 'react';
-import { ShoppingBag, User, Search } from 'lucide-react';
+import { ShoppingBag, User, Search, LayoutDashboard } from 'lucide-react'; // Added LayoutDashboard icon
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; // Import the hook
+import { useCart } from '../context/CartContext'; 
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -23,8 +23,23 @@ const Navbar = () => {
         <div className="flex gap-8 items-center">
           <Link to="/home" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Shop</Link>
           <span className="text-[10px] uppercase tracking-[0.3em] font-medium cursor-pointer hover:text-gray-500 transition-colors">Collections</span>
+          
           {user && (
             <Link to="/orders" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Orders</Link>
+          )}
+
+          {/* NEW: Admin Dashboard Link */}
+          {user && user.role === 'ADMIN' && (
+            <Link 
+              to="/admin" 
+              className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-900 hover:text-gray-500 transition-colors flex items-center gap-2"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-900"></span>
+              </span>
+              Dashboard
+            </Link>
           )}
         </div>
 
@@ -36,23 +51,29 @@ const Navbar = () => {
         {/* Right: Action Icons */}
         <div className="flex items-center gap-6">
           <Search size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
+          
           {user ? (
-            <button onClick={handleLogout} className="text-[10px] uppercase tracking-widest hover:text-gray-500 transition-colors">
-              Logout
-            </button>
+            <div className="flex items-center gap-4">
+              {/* Show user name if available */}
+              <span className="text-[9px] uppercase tracking-widest text-gray-400">
+                {user.name}
+              </span>
+              <button onClick={handleLogout} className="text-[10px] uppercase tracking-widest hover:text-gray-500 transition-colors">
+                Logout
+              </button>
+            </div>
           ) : (
             <Link to="/login">
               <User size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
             </Link>
           )}
           
-          {/* Cart Icon with Dynamic Badge */}
+          {/* Cart Icon */}
           <button 
             onClick={() => setIsCartOpen(true)} 
             className="relative p-1 hover:text-gray-500 transition-colors"
           >
             <ShoppingBag size={18} strokeWidth={1} />
-            {/* Only show badge if there are items in the cart */}
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#4A5D4E] text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full">
                 {cartCount}
