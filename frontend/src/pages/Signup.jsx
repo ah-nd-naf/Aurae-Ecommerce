@@ -30,6 +30,7 @@ const Signup = () => {
     try {
       // Backend expects email and password. We send name but backend might ignore it for now.
       await api.post('/auth/signup', {
+        name: formData.name,
         email: formData.email,
         password: formData.password
       });

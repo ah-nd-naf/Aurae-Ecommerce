@@ -72,3 +72,25 @@ export const getUserOrders = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch orders", error: error.message });
   }
 };
+
+// This fetches EVERYTHING for the admin dashboard
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      include: {
+        user: {
+          select: { name: true, email: true } // Let's see who placed the order
+        },
+        orderItems: {
+          include: { product: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch all orders" });
+  }
+};

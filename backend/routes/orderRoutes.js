@@ -1,6 +1,6 @@
 import express from "express";
-import { createOrder, getUserOrders } from "../controllers/orderController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
+import { createOrder, getUserOrders, getAllOrders } from "../controllers/orderController.js";
 
 const router = express.Router();
 
@@ -11,5 +11,9 @@ router.post('/', protect, createOrder);
 // Route to get a user's order history (Protected)
 // The URL will be GET /api/orders/my-orders
 router.get('/my-orders', protect, getUserOrders);
+
+// Get ALL orders (Admin Only)
+// URL: GET /api/orders
+router.get('/all', protect, admin, getAllOrders);
 
 export default router;

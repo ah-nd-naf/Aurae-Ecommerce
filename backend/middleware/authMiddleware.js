@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export const protect = (req, res, next) => {
+const protect = (req, res, next) => {
   // 1. Get the token from the Authorization header (e.g., "Bearer eyJhb...")
   const authHeader = req.header('Authorization');
 
@@ -23,3 +23,16 @@ export const protect = (req, res, next) => {
     res.status(401).json({ error: 'Invalid or expired token.' });
   }
 };
+
+// For Admin Protected Routes
+
+const admin = (req, res, next) => {
+  // We check the role we added to the User model
+  if(req.user && req.user.role === 'ADMIN') {
+    next() // All good, proceed to the admin controller
+  } else {
+    res.status(403).json({ error: "Access denied. Admins only." });
+  }
+};
+
+export { protect, admin };
