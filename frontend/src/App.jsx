@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
+import AdminDashboard from './pages/AdminDashboard';
 // Component Imports
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer'; // Added this
@@ -52,7 +53,17 @@ function App() {
           </ProtectedRoute>
          }
         />
-
+        
+        <Route path="/admin" 
+          element={
+            user && user.role === "ADMIN" ? (
+              <AdminDashboard/>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
     </div>
