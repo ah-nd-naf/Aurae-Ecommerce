@@ -29,56 +29,78 @@ const AdminDashboard = () => {
       await api.put(`/orders/${orderId}/status`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      // Refresh list to show updated status
       fetchAllOrders();
     } catch (err) {
       alert("Failed to update status");
     }
   };
 
-  if (loading) return <div className="p-20 text-center font-serif uppercase tracking-widest text-gray-400">Loading Master Ledger...</div>;
+  if (loading) return (
+    <div className="flex h-screen items-center justify-center font-serif uppercase tracking-widest text-gray-400 animate-pulse">
+      Retrieving Master Ledger...
+    </div>
+  );
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
-      <div className="mb-12">
-        <h1 className="text-3xl font-serif mb-2">Order Management</h1>
-        <p className="text-gray-500 text-sm italic">Admin Control Center</p>
-      </div>
+    <div className="max-w-7xl mx-auto px-6 py-20">
+      <header className="mb-16">
+        <h1 className="text-4xl font-serif mb-3 text-gray-900">Order Management</h1>
+        <div className="flex items-center gap-4">
+          <p className="text-gray-500 text-sm italic tracking-wide">Aurae Administrative Control</p>
+          <div className="h-[1px] w-20 bg-gray-200"></div>
+          <span className="text-[10px] font-bold uppercase tracking-widest bg-black text-white px-3 py-1">
+            {orders.length} Total Orders
+          </span>
+        </div>
+      </header>
 
-      <div className="overflow-x-auto border border-gray-100">
+      {/* Table Container with more visible border */}
+      <div className="overflow-hidden border-2 border-gray-100 rounded-lg shadow-sm bg-white">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-neutral-50 border-b border-gray-100">
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Order ID</th>
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Customer</th>
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Items</th>
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Total</th>
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Status</th>
-              <th className="p-4 text-[10px] uppercase tracking-widest font-bold text-gray-400">Action</th>
+            <tr className="bg-gray-50 border-b-2 border-gray-100">
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500">ID</th>
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500">Customer</th>
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500">Inventory</th>
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500">Amount</th>
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500">Current Status</th>
+              <th className="p-5 text-[11px] uppercase tracking-widest font-extrabold text-gray-500 text-right">Update Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y-2 divide-gray-50">
             {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-neutral-50/50 transition-colors">
-                <td className="p-4 text-xs font-mono">#{order.id}</td>
-                <td className="p-4">
-                  <p className="text-sm font-medium">{order.user?.name || 'Unknown'}</p>
-                  <p className="text-[10px] text-gray-400">{order.user?.email}</p>
+              <tr key={order.id} className="group hover:bg-neutral-50 transition-all duration-300">
+                <td className="p-5 text-xs font-mono text-gray-400">#{order.id}</td>
+                <td className="p-5">
+                  <p className="text-sm font-semibold text-gray-900 uppercase tracking-tight">
+                    {order.user?.name || 'Guest User'}
+                  </p>
+                  <p className="text-[10px] text-gray-400 font-mono italic">{order.user?.email}</p>
                 </td>
-                <td className="p-4 text-xs text-gray-600">
-                  {order.orderItems.length} {order.orderItems.length === 1 ? 'item' : 'items'}
+                <td className="p-5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600">{order.orderItems.length} SKU</span>
+                    <div className="group-hover:block hidden text-[10px] text-gray-600 font-medium">
+                      ({order.orderItems.map(i => i.product?.name).join(', ')})
+                    </div>
+                  </div>
                 </td>
-                <td className="p-4 text-sm font-serif">${order.totalAmount}</td>
-                <td className="p-4">
-                  <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm ${
-                    order.status === 'DELIVERED' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                <td className="p-5 text-sm font-serif font-bold text-gray-800">${order.totalAmount}</td>
+                <td className="p-5">
+                  <span className={`text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full border ${
+                    order.status === 'DELIVERED' 
+                      ? 'bg-green-50 text-green-700 border-green-200' 
+                      : order.status === 'PENDING'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-blue-50 text-blue-700 border-blue-200'
                   }`}>
                     {order.status}
                   </span>
                 </td>
-                <td className="p-4">
+                <td className="p-5 text-right">
+                  {/* VISIBILITY FIX: Stronger border and high-contrast focus */}
                   <select 
-                    className="text-[10px] uppercase tracking-tight border-gray-200 rounded-sm focus:ring-0"
+                    className="text-[10px] font-bold uppercase tracking-widest border-2 border-gray-800 rounded-sm px-3 py-2 bg-white cursor-pointer hover:bg-black hover:text-white transition-all focus:ring-0"
                     value={order.status}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
                   >
