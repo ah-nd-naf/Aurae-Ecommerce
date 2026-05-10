@@ -94,3 +94,20 @@ export const getAllOrders = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch all orders" });
   }
 };
+
+// Update order status (Admin only)
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: parseInt(id) },
+      data: { status: status },
+    });
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update order status" });
+  }
+};

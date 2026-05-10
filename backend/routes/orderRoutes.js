@@ -1,6 +1,6 @@
 import express from "express";
 import { protect, admin } from "../middleware/authMiddleware.js";
-import { createOrder, getUserOrders, getAllOrders } from "../controllers/orderController.js";
+import { createOrder, getUserOrders, getAllOrders, updateOrderStatus } from "../controllers/orderController.js";
 
 const router = express.Router();
 
@@ -15,5 +15,9 @@ router.get('/my-orders', protect, getUserOrders);
 // Get ALL orders (Admin Only)
 // URL: GET /api/orders
 router.get('/all', protect, admin, getAllOrders);
+
+// Update order status (Admin Only)
+
+router.put('/:id/status', protect, admin, updateOrderStatus);
 
 export default router;
