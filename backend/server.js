@@ -6,6 +6,7 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 const app = express();
 
@@ -20,7 +21,8 @@ app.use(express.json()); // Allows us to read JSON data sent to the server
 // Mount API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes); // Fixed: Added missing starting slash
+app.use("/api/orders", orderRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // A simple test route to see if the server is alive
 app.get("/", (req, res) => {
