@@ -1,41 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Plus, Trash2, X, Package, ShoppingCart } from 'lucide-react';
+import { Plus, Trash2, X, Package, ShoppingCart, Tag } from 'lucide-react';
 
 /**
  * AdminDashboard Component
- * A high-end administrative interface for managing the Aurae ecosystem.
- * Handles order fulfillment flow and dynamic inventory management.
+ * Central command for Aurae Admins. 
+ * Features: Order fulfillment, Dynamic Inventory (CRUD), and Category Management.
  */
 const AdminDashboard = () => {
   // --- Core State ---
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'inventory'
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // Dynamic categories from DB
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // --- Modal & Form State ---
+  // --- New Category State ---
+  const [newCategoryName, setNewCategoryName] = useState('');
+
+  // --- Modal & Product Form State ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
     basePrice: '',
-    categoryId: '', // Now dynamically populated
+    categoryId: '', 
     imageUrl: '',    
     variants: [{ size: '', color: '', stock: 0, price: '' }]
   });
 
   // --- Data Fetching Logic ---
 
-  /**
-   * Retrieves all categories for the product creation dropdown
-   */
   const fetchCategories = async () => {
     try {
       const response = await api.get('/categories');
       setCategories(response.data);
-      // Set the first category as default if state is empty
+      // Set the first category as default for the Add Product form if not set
       if (response.data.length > 0 && !newProduct.categoryId) {
         setNewProduct(prev => ({ ...prev, categoryId: response.data[0].id.toString() }));
       }
@@ -44,9 +44,6 @@ const AdminDashboard = () => {
     }
   };
 
-  /**
-   * Retrieves full order history across the entire platform
-   */
   const fetchAllOrders = async () => {
     try {
       const token = localStorage.getItem('aurae_token');
@@ -59,9 +56,6 @@ const AdminDashboard = () => {
     }
   };
 
-  /**
-   * Retrieves current inventory including variants and stock levels
-   */
   const fetchInventory = async () => {
     try {
       const response = await api.get('/products/all');
@@ -71,13 +65,10 @@ const AdminDashboard = () => {
     }
   };
 
-  /**
-   * Synchronize dashboard data based on active view or modal state
-   */
   useEffect(() => {
     const loadDashboardData = async () => {
       setLoading(true);
-      await fetchCategories(); // Always keep categories in sync
+      await fetchCategories();
       if (activeTab === 'orders') await fetchAllOrders();
       if (activeTab === 'inventory') await fetchInventory();
       setLoading(false);
@@ -86,6 +77,25 @@ const AdminDashboard = () => {
   }, [activeTab]);
 
   // --- Action Handlers ---
+
+  /**
+   * Adds a new classification/category to the database
+   */
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      const token = localStorage.getItem('aurae_token');
+      await api.post('/categories', { name: newCategoryName }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNewCategoryName('');
+      fetchCategories(); // Refresh tags and dropdowns
+      alert("New category archived.");
+    } catch (err) {
+      alert("Error: Category might already exist.");
+    }
+  };
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -100,7 +110,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm("CONFIRM DELETION: This entry and its metadata will be permanently removed.")) return;
+    if (!window.confirm("ARE YOU SURE? This action is permanent.")) return;
     try {
       const token = localStorage.getItem('aurae_token');
       await api.delete(`/products/${productId}`, {
@@ -121,13 +131,12 @@ const AdminDashboard = () => {
       });
       setIsModalOpen(false);
       fetchInventory();
-      alert("Entry successfully committed to archive.");
+      alert("Product committed to archive.");
     } catch (err) {
-      alert("Error: Ensure all fields are valid and category is selected.");
+      alert("Error adding product. Check all fields.");
     }
   };
 
-  // --- Loading View ---
   if (loading) return (
     <div className="flex h-screen items-center justify-center font-serif uppercase tracking-[0.4em] text-gray-400 animate-pulse">
       Syncing Administrative Systems...
@@ -137,7 +146,7 @@ const AdminDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-20">
       
-      {/* Tabbed Navigation Header */}
+      {/* Header & Tab Toggle */}
       <header className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
           <h1 className="text-4xl font-serif mb-6 text-gray-900 tracking-tight italic">Portal</h1>
@@ -167,7 +176,7 @@ const AdminDashboard = () => {
         )}
       </header>
 
-      {/* --- View: Orders --- */}
+      {/* --- View: Master Orders --- */}
       {activeTab === 'orders' && (
         <div className="overflow-hidden border-2 border-gray-100 rounded-lg bg-white">
           <table className="w-full text-left border-collapse">
@@ -221,40 +230,70 @@ const AdminDashboard = () => {
 
       {/* --- View: Inventory --- */}
       {activeTab === 'inventory' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {products.map(product => (
-            <div key={product.id} className="group border-2 border-gray-100 p-0 bg-white relative hover:border-gray-300 transition-all shadow-sm">
-              <button 
-                onClick={() => handleDeleteProduct(product.id)}
-                className="absolute top-4 right-4 z-20 bg-white/90 p-3 rounded-full shadow-md text-gray-400 hover:text-red-600 hover:bg-white transition-all transform hover:scale-110"
-              >
-                <Trash2 size={20} strokeWidth={2} />
+        <>
+          {/* Category Management Bar */}
+          <div className="mb-12 p-8 bg-neutral-50 border border-gray-100 rounded-sm shadow-sm">
+            <div className="flex items-center gap-2 mb-6">
+              <Tag size={14} className="text-gray-400" />
+              <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Archive Classifications</p>
+            </div>
+            <form onSubmit={handleAddCategory} className="flex gap-4 mb-6">
+              <input 
+                type="text" 
+                placeholder="NEW CATEGORY NAME (E.G. ACCESSORIES)" 
+                className="flex-1 bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none uppercase tracking-widest transition-all"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+              />
+              <button type="submit" className="bg-black text-white px-8 py-2 text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-gray-800 transition-all">
+                Add Classification
               </button>
-              
-              <div className="h-72 bg-neutral-100 flex items-center justify-center overflow-hidden border-b border-gray-100">
-                 {product.imageUrl ? (
-                   <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                 ) : (
-                   <Package size={48} className="text-gray-300" />
-                 )}
-              </div>
+            </form>
+            <div className="flex gap-2 flex-wrap">
+              {categories.map(cat => (
+                <span key={cat.id} className="text-[9px] border border-gray-200 px-3 py-1 text-gray-400 uppercase tracking-widest bg-white">
+                  {cat.name}
+                </span>
+              ))}
+            </div>
+          </div>
 
-              <div className="p-8">
-                <h3 className="font-serif text-xl mb-1 uppercase tracking-tight text-gray-900">{product.name}</h3>
-                <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-6 font-bold">
-                  {product.category?.name || 'Aurae Collection'}
-                </p>
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {products.map(product => (
+              <div key={product.id} className="group border-2 border-gray-100 p-0 bg-white relative hover:border-gray-300 transition-all shadow-sm">
+                <button 
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="absolute top-4 right-4 z-20 bg-white/90 p-3 rounded-full shadow-md text-gray-400 hover:text-red-600 hover:bg-white transition-all transform hover:scale-110 active:scale-95"
+                >
+                  <Trash2 size={20} strokeWidth={2} />
+                </button>
                 
-                <div className="flex justify-between items-center pt-6 border-t border-gray-50">
-                  <span className="font-serif font-bold text-lg text-gray-800">${product.basePrice}</span>
-                  <span className={`text-[10px] font-bold px-3 py-1 rounded-sm ${product.variants?.reduce((acc, v) => acc + v.stock, 0) < 5 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
-                    {product.variants?.reduce((acc, v) => acc + v.stock, 0) || 0} units
-                  </span>
+                <div className="h-72 bg-neutral-50 flex items-center justify-center overflow-hidden border-b border-gray-50">
+                  {product.imageUrl ? (
+                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  ) : (
+                    <Package size={48} className="text-gray-200" />
+                  )}
+                </div>
+
+                <div className="p-8">
+                  <h3 className="font-serif text-xl mb-1 uppercase tracking-tight text-gray-900">{product.name}</h3>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-6 font-bold">
+                    {product.category?.name || 'Aurae Collection'}
+                  </p>
+                  
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-50">
+                    <span className="font-serif font-bold text-lg text-gray-800">${product.basePrice}</span>
+                    <span className={`text-[10px] font-bold px-3 py-1 rounded-sm ${product.variants?.reduce((acc, v) => acc + v.stock, 0) < 5 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
+                      {product.variants?.reduce((acc, v) => acc + v.stock, 0) || 0} units
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* --- Add Product Modal --- */}
@@ -264,7 +303,7 @@ const AdminDashboard = () => {
             <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors">
               <X size={28} strokeWidth={1.5} />
             </button>
-            <h2 className="text-3xl font-serif mb-10 uppercase tracking-widest border-b border-gray-100 pb-6 italic">Add to Archive</h2>
+            <h2 className="text-3xl font-serif mb-10 uppercase tracking-widest border-b border-gray-100 pb-6 italic text-center">Commit to Archive</h2>
             
             <form onSubmit={handleAddProduct} className="space-y-8">
               <div className="grid grid-cols-2 gap-8">
@@ -280,16 +319,14 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Dynamic Category Selector */}
               <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Inventory Category</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Category Classification</label>
                 <select 
                   required
                   className="border-b-2 border-gray-100 py-3 focus:border-black outline-none bg-transparent text-[10px] uppercase tracking-widest cursor-pointer"
                   value={newProduct.categoryId}
                   onChange={(e) => setNewProduct({...newProduct, categoryId: e.target.value})}
                 >
-                  <option value="" disabled>Select Classification</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
@@ -297,7 +334,7 @@ const AdminDashboard = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Source Image URL</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Image Source URL</label>
                 <input type="text" required className="border-b-2 border-gray-100 py-3 focus:border-black outline-none text-[10px] uppercase tracking-widest"
                   onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} />
               </div>
@@ -308,13 +345,12 @@ const AdminDashboard = () => {
                   onChange={(e) => setNewProduct({...newProduct, description: e.target.value})} />
               </div>
 
-              {/* Variant Metadata Configuration */}
               <div className="p-8 bg-neutral-50 border border-gray-100 rounded-sm">
                 <p className="text-[10px] font-bold tracking-[0.2em] mb-8 text-gray-400 uppercase text-center border-b border-gray-200 pb-4">Variant Metadata</p>
                 <div className="grid grid-cols-3 gap-8">
                   <div className="flex flex-col gap-2">
                     <label className="text-[9px] uppercase tracking-widest text-gray-400">Size</label>
-                    <input type="text" required placeholder="EU 42" className="bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none" 
+                    <input type="text" required placeholder="E.G. XL" className="bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none" 
                       onChange={(e) => {
                         let v = [...newProduct.variants];
                         v[0].size = e.target.value;
@@ -324,7 +360,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-[9px] uppercase tracking-widest text-gray-400">Color</label>
-                    <input type="text" required placeholder="Slate" className="bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none" 
+                    <input type="text" required placeholder="E.G. ONYX" className="bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none" 
                       onChange={(e) => {
                         let v = [...newProduct.variants];
                         v[0].color = e.target.value;
@@ -333,7 +369,7 @@ const AdminDashboard = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[9px] uppercase tracking-widest text-gray-400">Stock</label>
+                    <label className="text-[9px] uppercase tracking-widest text-gray-400">Initial Stock</label>
                     <input type="number" required placeholder="0" className="bg-transparent border-b border-gray-300 py-2 text-[10px] focus:border-black outline-none" 
                       onChange={(e) => {
                         let v = [...newProduct.variants];
@@ -345,8 +381,8 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-black text-white py-6 text-[11px] uppercase tracking-[0.4em] font-bold hover:bg-gray-800 transition-all shadow-xl">
-                Commit to Database
+              <button type="submit" className="w-full bg-black text-white py-6 text-[11px] uppercase tracking-[0.4em] font-bold hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98]">
+                Finalize Archive Entry
               </button>
             </form>
           </div>

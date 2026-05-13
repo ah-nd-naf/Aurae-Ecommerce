@@ -1,5 +1,6 @@
 import express from "express";
-import { getCategories } from "../controllers/categoryController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
+import { getCategories, createCategory } from "../controllers/categoryController.js";
 
 const router = express.Router();
 
@@ -9,5 +10,6 @@ const router = express.Router();
  * @access Public
  */
 router.get("/", getCategories);
+router.post("/", protect, admin, createCategory);
 
 export default router;
