@@ -11,34 +11,45 @@ import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
+import Shop from './pages/Shop'; // Import verified
+
 // Component Imports
 import Navbar from './components/Navbar';
-import CartDrawer from './components/CartDrawer'; // Added this
+import CartDrawer from './components/CartDrawer';
 import './index.css';
 import ProtectedRoute from './components/ProtectedRoute';
 
+/**
+ * App Component
+ * Central routing configuration for Aurae.
+ */
 function App() {
   const { user } = useContext(AuthContext);
 
   return (
     <div className="min-h-screen bg-white pt-20">
-      {/* Global Navigation Bar */}
+      {/* Global Components */}
       <Navbar />
-
-      {/* Global Cart Drawer - It's outside Routes so it works on every page */}
       <CartDrawer /> 
 
       <Routes>
+        {/* Root Redirect Logic */}
         <Route 
           path="/" 
           element={user ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} 
         />
         
+        {/* Public Authentication Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
+        
+        {/* Browsing Routes (Accessible to everyone) */}
         <Route path="/home" element={<Home />} />
+        <Route path="/shop" element={<Shop />} /> {/* ADDED: Connection point for the Navbar button */}
+        <Route path="/product/:id" element={<ProductDetail />} />
+        
+        {/* Customer Protected Routes */}
         <Route path="/checkout"
          element={
           <ProtectedRoute>
@@ -54,6 +65,7 @@ function App() {
          }
         />
         
+        {/* Administrative Routes */}
         <Route path="/admin" 
           element={
             user && user.role === "ADMIN" ? (
@@ -64,6 +76,7 @@ function App() {
           }
         />
         
+        {/* Fallback Catch-all */}
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
     </div>

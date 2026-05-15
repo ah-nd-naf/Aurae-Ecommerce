@@ -1,10 +1,14 @@
 import React from 'react';
-import { ShoppingBag, User, Search, LayoutDashboard } from 'lucide-react'; // Added LayoutDashboard icon
+import { ShoppingBag, User, Search, LayoutDashboard } from 'lucide-react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; 
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
+/**
+ * Navbar Component
+ * Refined with functional links for the Collection and Admin Dashboard.
+ */
 const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
   const { user, logout } = useContext(AuthContext);
@@ -21,22 +25,34 @@ const Navbar = () => {
         
         {/* Left: Navigation Links */}
         <div className="flex gap-8 items-center">
-          <Link to="/home" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Shop</Link>
-          <span className="text-[10px] uppercase tracking-[0.3em] font-medium cursor-pointer hover:text-gray-500 transition-colors">Collections</span>
+          {/* Shop points to the main landing/featured page */}
+          <Link to="/home" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">
+            Shop
+          </Link>
+
+          {/* FIXED: Collections now points to the functional Shop Page */}
+          <Link 
+            to="/shop" 
+            className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors"
+          >
+            Collections
+          </Link>
           
           {user && (
-            <Link to="/orders" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">Orders</Link>
+            <Link to="/orders" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">
+              Orders
+            </Link>
           )}
 
-          {/* NEW: Admin Dashboard Link */}
+          {/* Admin Dashboard Access */}
           {user && user.role === 'ADMIN' && (
             <Link 
               to="/admin" 
-              className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-900 hover:text-gray-500 transition-colors flex items-center gap-2"
+              className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-900 hover:text-gray-500 transition-colors flex items-center gap-2 ml-4"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-900"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-20"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
               </span>
               Dashboard
             </Link>
@@ -44,7 +60,7 @@ const Navbar = () => {
         </div>
 
         {/* Center: Brand Logo */}
-        <Link to="/home" className="text-2xl tracking-[0.5em] font-light uppercase pl-12">
+        <Link to="/home" className="text-2xl tracking-[0.5em] font-light uppercase">
           Aurae
         </Link>
 
@@ -53,12 +69,17 @@ const Navbar = () => {
           <Search size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
           
           {user ? (
-            <div className="flex items-center gap-4">
-              {/* Show user name if available */}
-              <span className="text-[9px] uppercase tracking-widest text-gray-400">
-                {user.name}
-              </span>
-              <button onClick={handleLogout} className="text-[10px] uppercase tracking-widest hover:text-gray-500 transition-colors">
+            <div className="flex items-center gap-4 border-l border-gray-100 pl-6">
+              <div className="flex flex-col items-end">
+                <span className="text-[8px] uppercase tracking-tighter text-gray-400 font-bold">Account</span>
+                <span className="text-[10px] uppercase tracking-widest text-gray-900 font-medium max-w-[80px] truncate">
+                  {user.name}
+                </span>
+              </div>
+              <button 
+                onClick={handleLogout} 
+                className="text-[9px] uppercase tracking-widest bg-gray-50 px-3 py-1.5 rounded-sm hover:bg-black hover:text-white transition-all border border-gray-100"
+              >
                 Logout
               </button>
             </div>
@@ -75,7 +96,7 @@ const Navbar = () => {
           >
             <ShoppingBag size={18} strokeWidth={1} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#4A5D4E] text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full">
+              <span className="absolute -top-1 -right-1 bg-black text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
                 {cartCount}
               </span>
             )}
