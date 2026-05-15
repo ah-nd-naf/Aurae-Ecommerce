@@ -1,55 +1,57 @@
 import React from 'react';
-import { CheckCircle2, Circle, Truck, PackageCheck, Package, Clock } from 'lucide-react';
+import { Clock, Package, Truck, ShieldCheck } from 'lucide-react';
 
+/**
+ * OrderStepper Component
+ * High-contrast version for maximum visibility against white backgrounds.
+ */
 const OrderStepper = ({ currentStatus }) => {
-  // Define the stages in order
   const stages = [
-    { id: 'PENDING', label: 'Ordered', icon: Clock },
-    { id: 'PROCESSING', label: 'Processing', icon: Package },
-    { id: 'SHIPPED', label: 'Shipped', icon: Truck },
-    { id: 'DELIVERED', label: 'Delivered', icon: PackageCheck },
+    { id: 'PENDING', label: 'Confirmed', icon: Clock },
+    { id: 'PROCESSING', label: 'Preparing', icon: Package },
+    { id: 'SHIPPED', label: 'In Transit', icon: Truck },
+    { id: 'DELIVERED', label: 'Arrived', icon: ShieldCheck },
   ];
 
-  // Find the index of the current status to calculate progress
   const currentStep = stages.findIndex(s => s.id === currentStatus);
   
   return (
-    <div className="w-full py-8">
+    <div className="w-full py-10 px-4">
       <div className="relative flex justify-between">
-        {/* The Background Line */}
-        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gray-100 -translate-y-1/2 z-0"></div>
         
-        {/* The Progress Line */}
+        {/* --- Track Logic (Boosted Contrast) --- */}
+        {/* New Base Track: Solid black background for visibility */}
+        <div className="absolute top-1/2 left-0 w-full h-[3px] bg-black -translate-y-1/2 z-0 rounded-full"></div>
+        
+        {/* Active Progress Line: White on Black */}
         <div 
-          className="absolute top-1/2 left-0 h-[2px] bg-black -translate-y-1/2 z-0 transition-all duration-1000 ease-in-out"
+          className="absolute top-1/2 left-0 h-[3px] bg-white -translate-y-1/2 z-0 transition-all duration-1000 ease-out rounded-full"
           style={{ width: `${(currentStep / (stages.length - 1)) * 100}%` }}
         ></div>
 
-        {/* The Steps */}
+        {/* --- Step Logic --- */}
         {stages.map((stage, index) => {
           const Icon = stage.icon;
           const isCompleted = index <= currentStep;
           const isCurrent = index === currentStep;
 
           return (
-            <div key={stage.id} className="relative z-10 flex flex-col items-center group">
-              {/* The Circle/Icon */}
+            <div key={stage.id} className="relative z-10 flex flex-col items-center">
+              
+              {/* Node Styling */}
               <div className={`
-                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500
-                ${isCompleted ? 'bg-black text-white' : 'bg-white border-2 border-gray-100 text-gray-300'}
-                ${isCurrent ? 'ring-4 ring-gray-50' : ''}
+                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-700
+                ${isCompleted ? 'bg-black text-white' : 'bg-gray-100 text-gray-500 border border-gray-200'}
+                ${isCurrent ? 'ring-4 ring-gray-200' : ''}
               `}>
-                {isCompleted && index < currentStep ? (
-                  <CheckCircle2 size={18} />
-                ) : (
-                  <Icon size={18} />
-                )}
+                {/* Always show the full icon, just change color */}
+                <Icon size={16} className={`${isCompleted ? 'text-white' : 'text-gray-500'}`} />
               </div>
 
-              {/* The Label */}
+              {/* Label Styling (Maximum Contrast) */}
               <p className={`
-                absolute -bottom-8 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap transition-colors
-                ${isCompleted ? 'text-black' : 'text-gray-300'}
+                absolute -bottom-8 text-[10px] uppercase tracking-[0.3em] font-bold whitespace-nowrap transition-colors
+                ${isCompleted ? 'text-gray-900' : 'text-gray-700'} 
               `}>
                 {stage.label}
               </p>

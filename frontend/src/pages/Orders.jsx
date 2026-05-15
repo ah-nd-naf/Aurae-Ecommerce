@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
-import OrderStepper from '../components/OrderStepper'; // Import the new stepper
+import OrderStepper from '../components/OrderStepper';
+import { Search } from 'lucide-react'; // Added an icon for the empty state
 
 /**
  * Orders Component
- * The customer's archive of purchases. 
- * Featuring a visual progress stepper to track order fulfillment in real-time.
+ * Updated with maximized contrast for readability and visibility of the tracker.
  */
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -23,7 +23,7 @@ const Orders = () => {
         });
         setOrders(response.data);
       } catch (err) {
-        setError('Failed to load your order history. Please try again later.');
+        setError('AURA-ERR: Failed to connect to order ledger. Please verify connection.');
         console.error("Order Fetch Error:", err);
       } finally {
         setLoading(false);
@@ -33,74 +33,80 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  // --- Loading State UI (Contrasted Pulse) ---
   if (loading) return (
-    <div className="flex h-screen items-center justify-center font-serif uppercase tracking-[0.4em] text-gray-400 animate-pulse">
-      Retrieving Archive...
+    <div className="flex h-screen items-center justify-center font-serif uppercase tracking-[0.5em] text-gray-800 animate-pulse bg-neutral-50">
+      Consulting the Aurae Archive...
     </div>
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-24">
-      <header className="mb-16">
-        <h1 className="text-4xl font-serif mb-3 text-gray-900 tracking-tight">Purchase History</h1>
-        <p className="text-gray-500 font-light italic text-sm tracking-wide">A curated record of your Aurae collection.</p>
+    <div className="max-w-4xl mx-auto px-6 py-24">
+      <header className="mb-20">
+        <h1 className="text-5xl font-serif mb-4 text-gray-950 tracking-tight italic">My Orders</h1>
+        <p className="text-gray-800 font-medium text-sm tracking-wide">A high-contrast record of your curated Aurae collection.</p>
       </header>
 
+      {/* --- Error Display (Stronger Contrast) --- */}
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 text-[10px] mb-8 border border-red-100 uppercase tracking-widest text-center">
+        <div className="p-5 bg-red-100 text-red-900 text-xs mb-10 border-l-4 border-red-600 uppercase tracking-widest font-bold text-center">
           {error}
         </div>
       )}
 
+      {/* --- Empty State UI (Maximum Visibility) --- */}
       {orders.length === 0 ? (
-        <div className="text-center py-32 border border-dashed border-gray-200">
-          <p className="text-gray-400 uppercase tracking-[0.3em] text-[10px]">Your archive is currently empty.</p>
+        <div className="text-center py-40 border-2 border-dashed border-gray-300 rounded-sm bg-neutral-50">
+          <Search size={32} className="text-gray-300 mx-auto mb-6" />
+          <p className="text-gray-900 uppercase tracking-[0.4em] text-[11px] font-bold">Your archive is awaiting its first discovery.</p>
         </div>
       ) : (
-        <div className="space-y-16">
+        <div className="space-y-20">
           {orders.map((order) => (
-            <div key={order.id} className="border border-gray-100 p-8 sm:p-12 bg-white transition-all duration-500 hover:shadow-xl hover:border-gray-200">
+            // Boosted card border contrast
+            <div key={order.id} className="border-2 border-gray-200 p-8 sm:p-12 bg-white transition-all duration-500 hover:shadow-2xl hover:border-gray-900 rounded-sm">
               
-              {/* Order Metadata Block */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b border-gray-50 pb-10">
+              {/* --- Order Metadata Block (Maximized Contrast) --- */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b-2 border-gray-100 pb-12">
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400 mb-2 font-bold">Reference</p>
-                  <p className="text-xs font-mono text-gray-900 font-bold">#AUR-{String(order.id).padStart(4, '0')}</p>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Reference</p>
+                  <p className="text-sm font-mono text-gray-950 font-extrabold bg-gray-100 px-2 py-1 rounded-sm inline-block">#AUR-{String(order.id).padStart(4, '0')}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400 mb-2 font-bold">Date</p>
-                  <p className="text-xs text-gray-800 font-medium">{new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Date Entry</p>
+                  <p className="text-xs text-gray-950 font-bold">{new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400 mb-2 font-bold">Investment</p>
-                  <p className="text-sm font-serif font-bold text-gray-900">${order.totalAmount}</p>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Investment</p>
+                  <p className="text-lg font-serif font-bold text-gray-950 tracking-tight">${order.totalAmount}</p>
                 </div>
                 <div className="text-right sm:text-left">
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400 mb-2 font-bold">Current Phase</p>
-                  <span className={`text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full border ${
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Journey Status</p>
+                  {/* Status Badge: Maximum visibility */}
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-sm border-2 ${
                     order.status === 'DELIVERED' 
-                      ? 'bg-green-50 text-green-700 border-green-100' 
-                      : 'bg-stone-50 text-stone-600 border-stone-100'
+                      ? 'bg-green-100 text-green-950 border-green-300' 
+                      : 'bg-black text-white border-black'
                   }`}>
                     {order.status}
                   </span>
                 </div>
               </div>
 
-              {/* VISUAL ORDER TRACKER SECTION */}
+              {/* --- HIGH CONTRAST ORDER TRACKER SECTION --- */}
               <div className="max-w-2xl mx-auto mb-20 px-4">
-                <p className="text-center text-[9px] uppercase tracking-[0.3em] text-gray-300 mb-8 font-bold italic">Journey Status</p>
+                <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gray-800 mb-10 font-bold italic">Visual Timeline</p>
                 <OrderStepper currentStatus={order.status} />
               </div>
 
-              {/* Order Items List */}
-              <div className="space-y-10 pt-10 border-t border-gray-50">
-                <p className="text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-6">Manifest</p>
+              {/* --- Order Items List (Updated Colors) --- */}
+              <div className="space-y-12 pt-12 border-t-2 border-gray-100">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-gray-800 font-bold mb-8">Manifest: Items Delivered</p>
                 {order.orderItems.map((item, index) => (
                   <div key={index} className="flex justify-between items-center group">
-                    <div className="flex gap-8">
-                      {/* Product Image */}
-                      <div className="w-20 h-28 bg-neutral-50 overflow-hidden border border-gray-100">
+                    <div className="flex gap-10">
+                      {/* Product Image: Thicker border */}
+                      <div className="w-24 h-32 bg-neutral-100 overflow-hidden border-2 border-gray-100 group-hover:border-black transition-colors rounded-sm shadow-inner">
                         {item.product?.imageUrl ? (
                           <img 
                             src={item.product.imageUrl} 
@@ -108,25 +114,25 @@ const Orders = () => {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-200 uppercase tracking-widest">Aurae</div>
+                          <div className="w-full h-full flex items-center justify-center text-[9px] text-gray-300 uppercase tracking-[0.3em] font-bold">Aurae / Archiv</div>
                         )}
                       </div>
 
                       <div className="flex flex-col justify-center">
-                        <p className="font-serif text-gray-900 mb-2 text-sm uppercase tracking-widest">
+                        <p className="font-serif text-gray-950 mb-3 text-lg uppercase tracking-wider font-medium">
                           {item.product?.name || `Archive Item #${item.productId}`}
                         </p>
-                        <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
-                          <span className="font-bold">{item.color}</span>
-                          <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                          <span className="font-bold">{item.size}</span>
-                          <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
-                          <span className="italic">Qty {item.quantity}</span>
+                        <div className="flex items-center gap-6 text-[11px] text-gray-700 uppercase tracking-[0.2em]">
+                          <span className="font-extrabold bg-neutral-100 px-2 py-0.5 rounded-sm">{item.color}</span>
+                          <span className="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
+                          <span className="font-extrabold bg-neutral-100 px-2 py-0.5 rounded-sm">{item.size}</span>
+                          <span className="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
+                          <span className="italic font-bold">MANIFEST: {item.quantity} UNITS</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-serif text-gray-900 text-sm font-bold tracking-tighter">${item.price}</p>
+                      <p className="font-serif text-gray-950 text-xl font-bold tracking-tighter">${item.price}</p>
                     </div>
                   </div>
                 ))}
