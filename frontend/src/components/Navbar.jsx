@@ -5,10 +5,6 @@ import { useCart } from '../context/CartContext';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-/**
- * Navbar Component
- * Refined with functional links for the Collection and Admin Dashboard.
- */
 const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
   const { user, logout } = useContext(AuthContext);
@@ -19,22 +15,21 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  // Redirects to shop page to use the advanced search
+  const handleSearchClick = () => {
+    navigate('/shop');
+  };
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-8 h-20 flex justify-between items-center">
         
         {/* Left: Navigation Links */}
         <div className="flex gap-8 items-center">
-          {/* Shop points to the main landing/featured page */}
           <Link to="/home" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">
             Shop
           </Link>
-
-          {/* FIXED: Collections now points to the functional Shop Page */}
-          <Link 
-            to="/shop" 
-            className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors"
-          >
+          <Link to="/shop" className="text-[10px] uppercase tracking-[0.3em] font-medium hover:text-gray-500 transition-colors">
             Collections
           </Link>
           
@@ -44,7 +39,6 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Admin Dashboard Access */}
           {user && user.role === 'ADMIN' && (
             <Link 
               to="/admin" 
@@ -66,7 +60,13 @@ const Navbar = () => {
 
         {/* Right: Action Icons */}
         <div className="flex items-center gap-6">
-          <Search size={18} strokeWidth={1} className="cursor-pointer hover:text-gray-500 transition-colors" />
+          {/* Functional Search Icon */}
+          <Search 
+            size={18} 
+            strokeWidth={1} 
+            className="cursor-pointer hover:text-gray-500 transition-colors" 
+            onClick={handleSearchClick}
+          />
           
           {user ? (
             <div className="flex items-center gap-4 border-l border-gray-100 pl-6">
@@ -89,7 +89,6 @@ const Navbar = () => {
             </Link>
           )}
           
-          {/* Cart Icon */}
           <button 
             onClick={() => setIsCartOpen(true)} 
             className="relative p-1 hover:text-gray-500 transition-colors"
