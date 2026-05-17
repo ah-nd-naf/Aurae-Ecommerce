@@ -2,29 +2,38 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
-// Route Imports - Note the .js extensions (required in modern Node)
+// Route Imports
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js'; // new payment routes
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from the frontend
+  origin: 'http://localhost:5173', 
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'] // Explicitly allow the token header
+  allowedHeaders: ['Content-Type', 'Authorization'] 
 })); 
-app.use(express.json()); // Allows us to read JSON data sent to the server
+
+// JSON Middleware: Allows the server to parse JSON data from the frontend
+app.use(express.json()); 
+
+// URLENCODED Middleware: CRITICAL for SSLCommerz. 
+// SSLCommerz sends data back in a "form-style" format (not JSON). 
+// This line allows your server to read that specific type of data.
+app.use(express.urlencoded({ extended: true })); 
 
 // Mount API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/payment", paymentRoutes); //MOUNT the payment routes at /api/payment
 
-// A simple test route to see if the server is alive
+// A simple test route
 app.get("/", (req, res) => {
     res.send("Aurae backend is running");
 });
