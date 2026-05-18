@@ -41,6 +41,7 @@ const Checkout = () => {
 
       // 1. Call our new Backend 'init' route
       const response = await axios.post('http://localhost:5000/api/payment/init', {
+        items: cart, // send cart items to backend
         totalAmount: cartTotal,
         customerName: user?.name || "Customer",
         customerEmail: user?.email || "customer@example.com",

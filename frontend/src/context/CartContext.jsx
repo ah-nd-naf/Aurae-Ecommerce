@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
 
@@ -38,9 +38,9 @@ export const CartProvider = ({ children }) => {
   };
 
   // --- Logic: Clear Cart after Order ---
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
-  };
+  }, []);
 
   // --- Logic: Calculate Total Price ---
   const cartTotal = cart.reduce((sum, item) => sum + item.basePrice * item.quantity, 0);

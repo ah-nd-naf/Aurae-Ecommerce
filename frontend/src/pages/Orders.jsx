@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useCart } from '../context/CartContext'; 
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import OrderStepper from '../components/OrderStepper';
-import { Search } from 'lucide-react'; // Added an icon for the empty state
+import { Search, CheckCircle } from 'lucide-react'; 
 
 /**
  * Orders Component
- * Updated with maximized contrast for readability and visibility of the tracker.
+ * Handles the "Return Journey" from SSLCommerz and displays the order archive.
  */
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -14,6 +16,42 @@ const Orders = () => {
   const [error, setError] = useState('');
   const { user } = useContext(AuthContext);
 
+  // Payment Success Handling Hooks
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { clearCart } = useCart();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // --- 1. Handle Redirect Success Logic (Stabilized) ---
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    let timeoutId; // 1. Create a variable to hold our timer
+
+    if (params.get('status') === 'success') {
+      setShowSuccess(true);
+      clearCart(); // Clear the context cart
+      
+      // 2. Start the timer to clean the URL after 6 seconds
+      timeoutId = setTimeout(() => {
+        // We check if we are still on the "success" URL before navigating
+        if (window.location.search.includes('status=success')) {
+          navigate('/orders', { replace: true });
+          setShowSuccess(false);
+        }
+      }, 6000);
+    }
+
+    // --- 3. THE CLEANUP FUNCTION (CRITICAL) ---
+    // This tells React: "If the user leaves this component, KILL THE TIMER."
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        console.log("Aurae Timer: Navigation detected, ghost timer killed.");
+      }
+    };
+  }, [location.search, clearCart, navigate]);
+
+  // --- 2. Fetch Orders from Ledger ---
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -23,7 +61,7 @@ const Orders = () => {
         });
         setOrders(response.data);
       } catch (err) {
-        setError('AURA-ERR: Failed to connect to order ledger. Please verify connection.');
+        setError('AURA-ERR: Failed to connect to order ledger.');
         console.error("Order Fetch Error:", err);
       } finally {
         setLoading(false);
@@ -33,7 +71,6 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  // --- Loading State UI (Contrasted Pulse) ---
   if (loading) return (
     <div className="flex h-screen items-center justify-center font-serif uppercase tracking-[0.5em] text-gray-800 animate-pulse bg-neutral-50">
       Consulting the Aurae Archive...
@@ -42,19 +79,31 @@ const Orders = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-24">
+      
+      {/* --- SUCCESS NOTIFICATION --- */}
+      {showSuccess && (
+        <div className="bg-black text-white p-8 mb-16 flex items-center gap-6 animate-in fade-in slide-in-from-top-6 duration-1000 rounded-sm shadow-2xl">
+          <div className="bg-white rounded-full p-2">
+            <CheckCircle className="text-black" size={24} />
+          </div>
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.4em] font-black">Transaction Authenticated</p>
+            <p className="text-[9px] uppercase tracking-widest opacity-60 mt-2 italic">Your curated selection has been secured and moved to the processing phase.</p>
+          </div>
+        </div>
+      )}
+
       <header className="mb-20">
         <h1 className="text-5xl font-serif mb-4 text-gray-950 tracking-tight italic">My Orders</h1>
         <p className="text-gray-800 font-medium text-sm tracking-wide">A high-contrast record of your curated Aurae collection.</p>
       </header>
 
-      {/* --- Error Display (Stronger Contrast) --- */}
       {error && (
         <div className="p-5 bg-red-100 text-red-900 text-xs mb-10 border-l-4 border-red-600 uppercase tracking-widest font-bold text-center">
           {error}
         </div>
       )}
 
-      {/* --- Empty State UI (Maximum Visibility) --- */}
       {orders.length === 0 ? (
         <div className="text-center py-40 border-2 border-dashed border-gray-300 rounded-sm bg-neutral-50">
           <Search size={32} className="text-gray-300 mx-auto mb-6" />
@@ -63,10 +112,8 @@ const Orders = () => {
       ) : (
         <div className="space-y-20">
           {orders.map((order) => (
-            // Boosted card border contrast
             <div key={order.id} className="border-2 border-gray-200 p-8 sm:p-12 bg-white transition-all duration-500 hover:shadow-2xl hover:border-gray-900 rounded-sm">
               
-              {/* --- Order Metadata Block (Maximized Contrast) --- */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b-2 border-gray-100 pb-12">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Reference</p>
@@ -82,7 +129,6 @@ const Orders = () => {
                 </div>
                 <div className="text-right sm:text-left">
                   <p className="text-[10px] uppercase tracking-[0.25em] text-gray-700 mb-3 font-bold">Journey Status</p>
-                  {/* Status Badge: Maximum visibility */}
                   <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-sm border-2 ${
                     order.status === 'DELIVERED' 
                       ? 'bg-green-100 text-green-950 border-green-300' 
@@ -93,19 +139,16 @@ const Orders = () => {
                 </div>
               </div>
 
-              {/* --- HIGH CONTRAST ORDER TRACKER SECTION --- */}
               <div className="max-w-2xl mx-auto mb-20 px-4">
                 <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gray-800 mb-10 font-bold italic">Visual Timeline</p>
                 <OrderStepper currentStatus={order.status} />
               </div>
 
-              {/* --- Order Items List (Updated Colors) --- */}
               <div className="space-y-12 pt-12 border-t-2 border-gray-100">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-gray-800 font-bold mb-8">Manifest: Items Delivered</p>
                 {order.orderItems.map((item, index) => (
                   <div key={index} className="flex justify-between items-center group">
                     <div className="flex gap-10">
-                      {/* Product Image: Thicker border */}
                       <div className="w-24 h-32 bg-neutral-100 overflow-hidden border-2 border-gray-100 group-hover:border-black transition-colors rounded-sm shadow-inner">
                         {item.product?.imageUrl ? (
                           <img 

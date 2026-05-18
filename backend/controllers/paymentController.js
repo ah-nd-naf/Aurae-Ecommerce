@@ -1,108 +1,152 @@
-import SSLCommerzPayment from 'sslcommerz-lts';
-import { v4 as uuidv4 } from 'uuid'; // import v4 func & rename it to uuidv4
+import SSLCommerzPayment from 'sslcommerz-lts'; // to talk to the payment gateway
+import prisma from '../config/db.js';
 
+// Pull credentials from your .env file
 const store_id = process.env.STORE_ID;
 const store_passwd = process.env.STORE_PASSWORD;
-const is_live = false; // false = sandbox/test mode, true = live mode
+const is_live = false; // Set to false because we are using the Sandbox (test mode)
 
 /**
  * INIT PAYMENT
- * This function handles the request from your React Frontend to start a transaction.
+ * This function creates the order in your database as 'PENDING' 
+ * and then generates the bKash/Nagad payment link.
  */
 export const initPayment = async (req, res) => {
     try {
-        // Create a unique Transaction ID for this specific order (e.g., AUR-A1B2C3D4)
-        const transactionId = `AUR-${uuidv4().substring(0, 8).toUpperCase()}`;
+        // 1. Extract order details sent from the React Frontend
+        const { items, totalAmount, customerName, customerEmail, customerPhone, address } = req.body;
+        // if missing or empty
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: "Cart is empty" });
+        }
         
-        // customer information sent from the React Frontend (destructuring)
-        const { totalAmount, customerName, customerEmail, customerPhone, address } = req.body;
+        // 2. Identify the logged-in user from the request (attached by your auth middleware)
+        const userId = req.user.id || req.user.userId;
 
-        // SSLCommerz requires these specific field names.
+        // 3. DATABASE ACTION: Create the Order and OrderItems in your PostgreSQL database
+        // We use a Prisma transaction to ensure the header and the items are saved together.
+        const newOrder = await prisma.$transaction(async (tx) => {
+            const order = await tx.order.create({
+                data: {
+                    userId: userId,
+                    totalAmount: totalAmount,
+                    status: 'PENDING', // The order starts as 'PENDING' until payment is confirmed
+                    orderItems: {
+                        // Map through the items array to create rows in the orderItems table
+                        create: items.map((item) => ({
+                            productId: item.id,
+                            quantity: item.quantity,
+                            price: item.basePrice,
+                            size: item.size,
+                            color: item.color,
+                        })),
+                    },
+                },
+            });
+            return order;
+        });
+
+        // 4. Create a unique Transaction ID based on the actual Database ID
+        // This links the bKash payment directly to Order #X in your database.
+        const transactionId = `AUR-${newOrder.id}`;
+
+        // 5. Prepare the data object for SSLCommerz
         const data = {
-            total_amount: totalAmount, 
-            currency: 'BDT',           
-            tran_id: transactionId,   
+            total_amount: totalAmount,
+            currency: 'BDT',
+            tran_id: transactionId, // The ID we just generated
             
-            // if the bKash/Nagad payment is successful
+            // Redirect URLs: Where the user goes after the payment screen
             success_url: `${process.env.BACKEND_URL}/api/payment/success/${transactionId}`,
-            // if the payment fails
             fail_url: `${process.env.BACKEND_URL}/api/payment/fail/${transactionId}`,
-            // if the user clicks 'Cancel'
             cancel_url: `${process.env.BACKEND_URL}/api/payment/cancel/${transactionId}`,
-            // IPN (Instant Payment Notification) is a background 'ping' from SSLCommerz to your server
-            ipn_url: `${process.env.BACKEND_URL}/api/payment/ipn`,
+            ipn_url: `${process.env.BACKEND_URL}/api/payment/ipn`, // Background verification ping
             
-            // General information about the shipment and product type
+            // General Product Info
             shipping_method: 'Courier',
-            product_name: 'Aurae Order',
-            product_category: 'Apparel',
+            product_name: 'Aurae Collection',
+            product_category: 'Clothing',
             product_profile: 'general',
 
-            // --- Customer Details (Mandatory) ---
+            // Customer Details (Mandatory for SSLCommerz)
             cus_name: customerName,
             cus_email: customerEmail,
             cus_add1: address,
             cus_city: 'Dhaka',
-            cus_postcode: '1000', // Mandatory field for SSLCommerz
+            cus_postcode: '1000', // We use a dummy postcode to satisfy the API
             cus_country: 'Bangladesh',
             cus_phone: customerPhone,
 
-            // --- Shipping Details (Mandatory) ---
+            // Shipping Details (Mandatory for SSLCommerz)
             ship_name: customerName,
             ship_add1: address,
             ship_city: 'Dhaka',
-            ship_postcode: '1000', // Mandatory field
+            ship_postcode: '1000', // Fixed: SSLCommerz rejects the request if this is missing
             ship_country: 'Bangladesh',
         };
 
-        // Initialize the SSLCommerz tool with your Store credentials and environment setting
+        // 6. Initialize the SSLCommerz Instance with your Store ID and Password
         const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
         
-        // Wait for SSLCommerz to process our data and generate a session
+        // 7. Request the Payment URL from SSLCommerz
         const apiResponse = await sslcz.init(data);
 
-        // If SSLCommerz gives us a Gateway URL, it means the request was accepted
+        // 8. If successful, send the bKash/Nagad link back to your React app
         if (apiResponse?.GatewayPageURL) {
-            console.log("✅ Payment URL Generated Successfully");
-            // Send the URL back to React so the browser can redirect the user
+            console.log(`✅ Order #${newOrder.id} saved. Payment URL generated.`);
             return res.status(200).json({ url: apiResponse.GatewayPageURL });
         } else {
-            // If GatewayPageURL is missing, log the error response for debugging
-            console.log("❌ SSLCommerz Error Response:", apiResponse);
-            return res.status(400).json({ 
-                message: "SSLCommerz failed to generate URL", 
-                details: apiResponse 
-            });
+            // If SSLCommerz fails, log the response so you can see why in the terminal
+            console.log("❌ SSLCommerz Error:", apiResponse);
+            return res.status(400).json({ message: "SSLCommerz failed", details: apiResponse });
         }
 
     } catch (error) {
-        // If the code crashes (e.g., network error), log the full error stack
-        console.error("❌ Internal Server Error during Payment Init:", error);
-        // Send a 500 error back to React
+        // If the code crashes (e.g., database error), log it and send an error to the frontend
+        console.error("❌ Payment Init Error:", error);
         res.status(500).json({ error: error.message });
     }
 };
 
 /**
  * PAYMENT SUCCESS
- * SSLCommerz calls this route automatically after the user pays.
+ * This is called by SSLCommerz after the user pays successfully.
+ * It updates the database status from 'PENDING' to 'PROCESSING'.
  */
 export const paymentSuccess = async (req, res) => {
-    // Log the transaction ID to the server console
-    console.log("✅ Payment Success for Transaction:", req.params.tranId);
-    
-    // In the future, you will add code here to find the order in your Database 
-    // and change its status from 'PENDING' to 'PAID'.
+    try {
+        // 1. Get the transaction ID from the URL (e.g., AUR-25)
+        const { tranId } = req.params;
+        
+        // 2. Extract the numeric Order ID (Remove 'AUR-' and convert to a number)
+        const orderId = parseInt(tranId.replace('AUR-', ''));
 
-    // Redirect the user's browser back to your React Frontend's orders page
-    res.redirect(`${process.env.FRONTEND_URL}/orders?status=success`);
+        // 3. DATABASE ACTION: Update the order status to 'PROCESSING'
+        // This automatically updates the customer's visual order tracker!
+        await prisma.order.update({
+            where: { id: orderId },
+            data: { status: 'PROCESSING' }
+        });
+
+        console.log(`✅ Transaction Confirmed: Order #${orderId} is now PAID.`);
+
+        // 4. Redirect the user's browser back to the Aurae Orders page
+        // We add '?status=success' so the frontend can show a "Thank You" banner
+        res.redirect(`${process.env.FRONTEND_URL}/orders?status=success`);
+        
+    } catch (error) {
+        console.error("❌ Success Callback Error:", error);
+        // If something fails here, send the user back to checkout to see the error
+        res.redirect(`${process.env.FRONTEND_URL}/checkout?status=error`);
+    }
 };
 
 /**
  * PAYMENT FAIL
- * SSLCommerz calls this if the user's card is declined or bKash fails.
+ * This is called if the user's payment is declined.
  */
 export const paymentFail = async (req, res) => {
-    // Redirect the user back to the checkout page so they can try again
+    console.log("❌ Payment Failed for Transaction:", req.params.tranId);
+    // Send user back to checkout so they can try a different payment method
     res.redirect(`${process.env.FRONTEND_URL}/checkout?status=fail`);
 };
