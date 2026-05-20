@@ -23,6 +23,7 @@ model User {
   otpExpiresAt  DateTime?
   createdAt     DateTime @default(now())
   orders        Order[]
+  reviews       Review[]
 }
 
 model Category {
@@ -42,6 +43,7 @@ model Product {
   variants    ProductVariant[]
   createdAt   DateTime         @default(now())
   orderItems  OrderItem[]
+  reviews     Review[]
 }
 
 model ProductVariant {
@@ -74,4 +76,22 @@ model OrderItem {
   price     Float
   size      String
   color     String
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  rating      Int      // Will hold a number from 1 to 5
+  comment     String   // The text feedback from the customer
+  createdAt   DateTime @default(now())
+  
+  // Relations: Connecting the review to a User profile
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relations: Connecting the review to a Product item
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Safety constraint: A user can only leave ONE review per product item to avoid spamming
+  @@unique([userId, productId])
 }

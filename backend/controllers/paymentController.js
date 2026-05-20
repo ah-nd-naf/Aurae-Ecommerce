@@ -15,7 +15,8 @@ export const initPayment = async (req, res) => {
     try {
         // 1. Extract order details sent from the React Frontend
         const { items, totalAmount, customerName, customerEmail, customerPhone, address } = req.body;
-        // if missing or empty
+        
+        // Safety check: if items list is missing or empty, stop immediately
         if (!items || items.length === 0) {
             return res.status(400).json({ message: "Cart is empty" });
         }
@@ -111,7 +112,7 @@ export const initPayment = async (req, res) => {
 /**
  * PAYMENT SUCCESS
  * This is called by SSLCommerz after the user pays successfully.
- * It updates the database status from 'PENDING' to 'PROCESSING'.
+ * It updates the database status from 'PENDING' to 'PROCESSING' and deducts stock.
  */
 export const paymentSuccess = async (req, res) => {
     try {
@@ -121,14 +122,55 @@ export const paymentSuccess = async (req, res) => {
         // 2. Extract the numeric Order ID (Remove 'AUR-' and convert to a number)
         const orderId = parseInt(tranId.replace('AUR-', ''));
 
-        // 3. DATABASE ACTION: Update the order status to 'PROCESSING'
-        // This automatically updates the customer's visual order tracker!
-        await prisma.order.update({
-            where: { id: orderId },
-            data: { status: 'PROCESSING' }
+        // 3. SECURE TRANSACTION: Change order status and deduct physical item stock amounts.
+        // We pack this inside a transaction so if a step fails, the whole database safely reverts.
+        await prisma.$transaction(async (tx) => {
+            
+            // Step A: Fetch the target order along with its collection of specific order items
+            const order = await tx.order.findUnique({
+                where: { id: orderId },
+                include: { orderItems: true }
+            });
+
+            // If the order has already been processed or doesn't exist, exit immediately
+            if (!order || order.status !== 'PENDING') {
+                throw new Error("Order not found or has already been completed.");
+            }
+
+            // Step B: Update the primary Order status tracker to 'PROCESSING'
+            await tx.order.update({
+                where: { id: orderId },
+                data: { status: 'PROCESSING' }
+            });
+
+            // Step C: Loop through every distinct apparel piece inside the order manifest
+            for (const item of order.orderItems) {
+                
+                // Track down the corresponding size/color record row inside the productVariant table
+                const variant = await tx.productVariant.findFirst({
+                    where: {
+                        productId: item.productId,
+                        size: item.size,
+                        color: item.color
+                    }
+                });
+
+                // If a matching item variant row exists, deduct the units bought
+                if (variant) {
+                    await tx.productVariant.update({
+                        where: { id: variant.id },
+                        data: {
+                            stock: {
+                                decrement: item.quantity // Automatically drops stock levels safely
+                            }
+                        }
+                    });
+                    console.log(`📉 Stock reduced for Product ID ${item.productId} (${item.size}/${item.color}) by ${item.quantity} units.`);
+                }
+            }
         });
 
-        console.log(`✅ Transaction Confirmed: Order #${orderId} is now PAID.`);
+        console.log(`✅ Transaction Fully Confirmed & Stock Adjusted: Order #${orderId} is now paid.`);
 
         // 4. Redirect the user's browser back to the Aurae Orders page
         // We add '?status=success' so the frontend can show a "Thank You" banner
