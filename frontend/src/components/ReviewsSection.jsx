@@ -4,7 +4,7 @@ import { Star, MessageSquare, ShieldCheck, Loader2 } from 'lucide-react';
 
 /**
  * ReviewsSection Component
- * Elegantly handles listing public feedback and posting authenticated reflections.
+ * High-Contrast version to fix visibility and text styling issues.
  */
 const ReviewsSection = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
@@ -12,12 +12,10 @@ const ReviewsSection = ({ productId }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   
-  // Review Form States
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [hoveredRating, setHoveredRating] = useState(null);
 
-  // --- 1. Fetch Existing Reviews for this Product ---
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -33,7 +31,6 @@ const ReviewsSection = ({ productId }) => {
     if (productId) fetchReviews();
   }, [productId]);
 
-  // --- 2. Handle Review Submission ---
   const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!comment.trim()) return;
@@ -49,14 +46,12 @@ const ReviewsSection = ({ productId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Successfully posted: add the new review to the top of our list
       setReviews((prevReviews) => [response.data.review, ...prevReviews]);
-      setComment(''); // Reset text box
-      setRating(5);   // Reset stars
+      setComment('');
+      setRating(5);
       alert("Review authenticated and published successfully.");
     } catch (err) {
       console.error("Review submission fault:", err);
-      // Capture 403 (Not Purchased) or 400 (Already Reviewed) errors from backend
       setError(err.response?.data?.message || 'Verification failed. Could not authenticate review.');
     } finally {
       setSubmitting(false);
@@ -64,23 +59,22 @@ const ReviewsSection = ({ productId }) => {
   };
 
   return (
-    <div className="mt-24 border-t border-gray-200 pt-16 max-w-4xl mx-auto">
-      <h2 className="text-[12px] uppercase tracking-[0.4em] font-bold mb-12 text-gray-950 flex items-center gap-3">
-        <MessageSquare size={16} /> Reflections & Ledger Accounts
+    <div className="mt-24 border-t-2 border-gray-900 pt-16 max-w-4xl mx-auto">
+      <h2 className="text-[12px] uppercase tracking-[0.4em] font-black mb-12 text-gray-950 flex items-center gap-3">
+        <MessageSquare size={16} className="text-black" /> Reflections & Ledger Accounts
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
         
-        {/* --- LEFT SIDE: THE VERIFIED SUBMISSION FORM (5 Columns) --- */}
-        <div className="md:col-span-5 bg-neutral-50 p-6 border border-gray-100 rounded-sm">
-          <h3 className="text-[10px] uppercase tracking-[0.25em] font-bold mb-6 text-gray-900 flex items-center gap-2">
-            <ShieldCheck size={14} className="text-gray-950" /> Document Reflection
+        {/* --- LEFT SIDE: FORM --- */}
+        <div className="md:col-span-5 bg-white p-6 border-2 border-gray-900 rounded-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h3 className="text-[11px] uppercase tracking-[0.25em] font-black mb-6 text-gray-9ments-center gap-2 flex items-center">
+            <ShieldCheck size={14} className="text-black" /> Document Reflection
           </h3>
           
           <form onSubmit={handleSubmitReview} className="space-y-6">
-            {/* Interactive Star Picker Selection */}
             <div>
-              <label className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2">Assigned Investment Rating</label>
+              <label className="text-[10px] uppercase tracking-widest text-gray-900 font-bold block mb-2">Assigned Rating</label>
               <div className="flex gap-1.5">
                 {[1, 2, 3, 4, 5].map((starValue) => (
                   <button
@@ -92,7 +86,7 @@ const ReviewsSection = ({ productId }) => {
                     onMouseLeave={() => setHoveredRating(null)}
                   >
                     <Star
-                      size={18}
+                      size={20}
                       className={
                         starValue <= (hoveredRating || rating)
                           ? "fill-black text-black"
@@ -104,31 +98,28 @@ const ReviewsSection = ({ productId }) => {
               </div>
             </div>
 
-            {/* Comment Text Box */}
             <div>
-              <label className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2">Statement of Verification</label>
+              <label className="text-[10px] uppercase tracking-widest text-gray-900 font-bold block mb-2">Statement of Verification</label>
               <textarea
                 rows="4"
                 required
                 placeholder="Share details regarding texture, execution, and fitting..."
-                className="w-full bg-white border border-gray-200 py-3 px-4 text-[11px] outline-none focus:border-black transition-colors resize-none rounded-sm"
+                className="w-full bg-neutral-50 border-2 border-gray-900 py-3 px-4 text-xs font-medium text-gray-950 outline-none focus:bg-white transition-colors resize-none rounded-sm"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
             </div>
 
-            {/* Error Message Notice Display Block */}
             {error && (
-              <p className="text-[9px] text-red-700 bg-red-50 border border-red-100 p-3 rounded-sm font-bold uppercase tracking-wider leading-relaxed">
-                AURA-GATE-DENIED: {error}
+              <p className="text-[10px] text-red-600 bg-red-50 border-2 border-red-600 p-3 rounded-sm font-black uppercase tracking-wider leading-relaxed">
+                {error}
               </p>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={submitting || !comment.trim()}
-              className="w-full bg-black text-white py-3.5 text-[9px] uppercase tracking-[0.3em] font-bold hover:bg-zinc-800 transition-colors disabled:bg-gray-300 flex justify-center items-center gap-2"
+              className="w-full bg-black text-white py-4 text-[10px] uppercase tracking-[0.3em] font-black hover:bg-neutral-800 transition-colors disabled:bg-gray-300 flex justify-center items-center gap-2"
             >
               {submitting ? (
                 <>
@@ -141,42 +132,42 @@ const ReviewsSection = ({ productId }) => {
           </form>
         </div>
 
-        {/* --- RIGHT SIDE: THE REVIEWS FEED ELEMENT LIST (7 Columns) --- */}
+        {/* --- RIGHT SIDE: HIGH CONTRAST REVIEWS FEED --- */}
         <div className="md:col-span-7 space-y-8">
           {loading ? (
-            <div className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-2">
-              <Loader2 className="animate-spin" size={12} /> Syncing testimonials...
+            <div className="text-[11px] text-gray-900 font-bold uppercase tracking-widest flex items-center gap-2">
+              <Loader2 className="animate-spin" size={12} /> Syncing ledger files...
             </div>
           ) : reviews.length === 0 ? (
-            <div className="text-center py-12 border border-dashed border-gray-200 rounded-sm bg-white">
-              <p className="text-gray-400 uppercase tracking-[0.3em] text-[10px]">No reflections have been logged for this product.</p>
+            <div className="text-center py-16 border-2 border-dashed border-gray-300 rounded-sm bg-white">
+              <p className="text-gray-900 font-bold uppercase tracking-[0.3em] text-[11px]">No reflections have been logged for this product.</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto pr-2 space-y-6">
+            <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2">
               {reviews.map((review) => (
-                <div key={review.id} className="pt-6 first:pt-0 animate-in fade-in duration-500">
-                  <div className="flex justify-between items-start mb-2">
+                <div key={review.id} className="p-5 border-2 border-gray-200 bg-white rounded-sm hover:border-black transition-colors duration-300">
+                  <div className="flex justify-between items-start mb-4">
                     <div>
-                      {/* Customer Name + Verified Purchaser Tag Badge */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-gray-950 uppercase tracking-wider">
+                      <div className="flex items-center gap-3">
+                        {/* CHANGED: Swapped gray text out for high-visibility bold black typography */}
+                        <span className="text-[12px] font-black text-gray-950 uppercase tracking-wider">
                           {review.user?.name}
                         </span>
-                        <span className="text-[8px] bg-neutral-900 text-white font-mono font-bold px-1.5 py-0.5 rounded-xs flex items-center gap-1 scale-90">
-                          <ShieldCheck size={10} className="text-white fill-none" /> VERIFIED
+                        <span className="text-[9px] bg-black text-white font-mono font-black px-2 py-0.5 rounded-sm flex items-center gap-1">
+                          <ShieldCheck size={10} className="text-white fill-none" /> VERIFIED PURCHASER
                         </span>
                       </div>
-                      <p className="text-[8px] font-mono text-gray-400 mt-0.5">
-                        {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {/* CHANGED: Made timestamp clear and high-contrast */}
+                      <p className="text-[10px] font-mono font-bold text-gray-500 mt-1">
+                        LOG ENTRY: {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
                       </p>
                     </div>
 
-                    {/* Star Breakdown Output */}
                     <div className="flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((starIndex) => (
                         <Star
                           key={starIndex}
-                          size={11}
+                          size={12}
                           className={
                             starIndex <= review.rating
                               ? "fill-black text-black"
@@ -187,8 +178,8 @@ const ReviewsSection = ({ productId }) => {
                     </div>
                   </div>
 
-                  {/* Comment Text Content */}
-                  <p className="text-[11px] text-gray-700 leading-relaxed font-normal bg-neutral-50/50 p-3 rounded-sm border border-neutral-100/50 italic">
+                  {/* CHANGED: Dark crisp text inside the user feedback comment block */}
+                  <p className="text-[12px] text-gray-900 font-medium leading-relaxed bg-neutral-50 p-4 border border-neutral-200 rounded-sm italic">
                     "{review.comment}"
                   </p>
                 </div>

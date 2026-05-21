@@ -42,12 +42,10 @@ export const createReview = async (req, res) => {
     }
 
     // 3. SPAM PROTECTION: Verify they haven't reviewed this item already
-    const existingReview = await prisma.review.findUnique({
+    const existingReview = await prisma.review.findFirst({
       where: {
-        userId_productId: {
-          userId: userId,
-          productId: parseInt(productId)
-        }
+        userId: userId,
+        productId: parseInt(productId)
       }
     });
 

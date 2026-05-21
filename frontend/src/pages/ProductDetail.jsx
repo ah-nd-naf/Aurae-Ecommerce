@@ -2,6 +2,8 @@ import { useCart } from "../context/CartContext";
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+// Imported the brand new Verified Reviews Section component
+import ReviewsSection from '../components/ReviewsSection';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -125,6 +127,12 @@ const ProductDetail = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* --- MOUNTED VERIFIED REVIEWS SECTION SYSTEM --- */}
+      {/* Placed below the fold to let buyers read and post real verified reviews */}
+      <div className="mt-12 border-t border-gray-100">
+        <ReviewsSection productId={id} />
       </div>
     </div>
   );
