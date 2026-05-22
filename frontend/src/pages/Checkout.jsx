@@ -88,21 +88,21 @@ const Checkout = () => {
             <h2 className="text-[10px] uppercase tracking-[0.3em] font-bold border-b pb-4 mb-8">Shipping Information</h2>
             <form className="space-y-6">
               <div>
-                <label className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2">Contact Number</label>
+                <label className="text-[9px] uppercase tracking-widest text-gray-600 block mb-2">Contact Number</label>
                 <input 
                   type="text" 
                   placeholder="017XXXXXXXX"
-                  className="w-full bg-gray-50 border-b border-gray-200 py-3 px-4 text-[11px] outline-none focus:border-black transition-colors"
+                  className="w-full bg-white text-gray-900 placeholder:text-gray-400 border-b border-gray-300 py-3 px-4 text-[11px] outline-none focus:border-black transition-colors"
                   value={shippingData.phone}
                   onChange={(e) => setShippingData({ ...shippingData, phone: e.target.value })}
                 />
               </div>
               <div>
-                <label className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2">Delivery Address</label>
+                <label className="text-[9px] uppercase tracking-widest text-gray-600 block mb-2">Delivery Address</label>
                 <textarea 
                   rows="3"
                   placeholder="House, Road, Area..."
-                  className="w-full bg-gray-50 border-b border-gray-200 py-3 px-4 text-[11px] outline-none focus:border-black transition-colors resize-none"
+                  className="w-full bg-white text-gray-900 placeholder:text-gray-400 border-b border-gray-300 py-3 px-4 text-[11px] outline-none focus:border-black transition-colors resize-none"
                   value={shippingData.address}
                   onChange={(e) => setShippingData({ ...shippingData, address: e.target.value })}
                 />

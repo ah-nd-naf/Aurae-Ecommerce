@@ -52,7 +52,7 @@ const Signup = () => {
           className="absolute inset-0 w-full h-full object-cover"
           loading='lazy'
         />
-        <div className="absolute inset-0 bg-black/20" /> {/* Subtle overlay */}
+        <div className="absolute inset-0 bg-black/40" /> {/* Subtle overlay */}
         
         <div className="relative z-10 flex flex-col justify-end p-12 text-white h-full w-full">
           <h2 className="text-4xl font-serif tracking-widest mb-4">AURAE</h2>
@@ -69,7 +69,7 @@ const Signup = () => {
           <h2 className="text-2xl font-serif tracking-widest text-center mb-10 lg:hidden">Aurae</h2>
 
           <h1 className="text-4xl font-serif text-gray-900 mb-2">Create an Account</h1>
-          <p className="text-gray-500 mb-10">Enter your details to join our community.</p>
+          <p className="text-gray-600 mb-10">Enter your details to join our community.</p>
 
           {error && (
             <div className="mb-6 p-3 bg-red-50 text-red-700 rounded-md text-sm">
@@ -79,7 +79,7 @@ const Signup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-[11px] font-bold tracking-widest text-gray-700 uppercase mb-2">Full Name</label>
+              <label className="block text-[11px] font-bold tracking-widest text-gray-800 uppercase mb-2">Full Name</label>
               <input
                 type="text"
                 name="name"
@@ -87,12 +87,12 @@ const Signup = () => {
                 onChange={handleChange}
                 placeholder="Jean-Luc Godard"
                 required
-                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
+                className="w-full px-4 py-3 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold tracking-widest text-gray-700 uppercase mb-2">Email Address</label>
+              <label className="block text-[11px] font-bold tracking-widest text-gray-800 uppercase mb-2">Email Address</label>
               <input
                 type="email"
                 name="email"
@@ -100,12 +100,12 @@ const Signup = () => {
                 onChange={handleChange}
                 placeholder="hello@lessence.com"
                 required
-                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
+                className="w-full px-4 py-3 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold tracking-widest text-gray-700 uppercase mb-2">Password</label>
+              <label className="block text-[11px] font-bold tracking-widest text-gray-800 uppercase mb-2">Password</label>
               <input
                 type="password"
                 name="password"
@@ -114,7 +114,7 @@ const Signup = () => {
                 placeholder="••••••••"
                 required
                 minLength={6}
-                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
+                className="w-full px-4 py-3 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
               />
             </div>
 
@@ -130,8 +130,8 @@ const Signup = () => {
                 />
               </div>
               <div className="ml-3 text-sm">
-                <label htmlFor="agreed" className="text-gray-500 cursor-pointer select-none">
-                  I agree to the <a href="#" className="underline hover:text-gray-800">Terms of Service</a> and <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>.
+                <label htmlFor="agreed" className="text-gray-600 cursor-pointer select-none">
+                  I agree to the <a href="#" className="underline text-gray-800 hover:text-black">Terms of Service</a> and <a href="#" className="underline text-gray-800 hover:text-black">Privacy Policy</a>.
                 </label>
               </div>
             </div>
@@ -146,16 +146,15 @@ const Signup = () => {
           </form>
 
           <div className="mt-8 pt-8 border-t border-gray-100 text-center relative">
-            <span className="absolute bg-white px-4 text-[10px] text-gray-400 uppercase tracking-widest -top-2.5 left-1/2 -translate-x-1/2">
+            <span className="absolute bg-white px-4 text-[10px] text-gray-600 uppercase tracking-widest -top-2.5 left-1/2 -translate-x-1/2">
               OR
             </span>
-            <p className="text-sm text-gray-500 mt-4">
+            <p className="text-sm text-gray-600 mt-4">
               Already have an account? <Link to="/login" className="text-gray-900 font-semibold hover:underline">Sign In</Link>
-
             </p>
           </div>
 
-          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-400 uppercase tracking-widest">
+          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-500 uppercase tracking-widest">
             &copy; 2026 AURAE. QUALITY OVER QUANTITY.
           </div>
         </div>

@@ -52,7 +52,7 @@ const Login = () => {
           className="absolute inset-0 w-full h-full object-cover object-full"
           loading='lazy'
         />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/40" />
         
         <div className="relative z-10 flex flex-col justify-end p-12 text-white h-full w-full">
           <h2 className="text-4xl font-serif tracking-widest mb-4 uppercase">AURAE</h2>
@@ -69,7 +69,7 @@ const Login = () => {
           <h2 className="text-2xl font-serif tracking-widest text-center mb-10 lg:hidden uppercase">AURAE</h2>
 
           <h1 className="text-4xl font-serif text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-500 mb-10">Enter your credentials to access your account.</p>
+          <p className="text-gray-600 mb-10">Enter your credentials to access your account.</p>
 
           {error && (
             <div className="mb-6 p-3 bg-red-50 text-red-700 rounded-md text-sm">
@@ -79,7 +79,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-[11px] font-bold tracking-widest text-gray-700 uppercase mb-2">Email Address</label>
+              <label className="block text-[11px] font-bold tracking-widest text-gray-800 uppercase mb-2">Email Address</label>
               <input
                 type="email"
                 name="email"
@@ -87,14 +87,14 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="hello@lessence.com"
                 required
-                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
+                className="w-full px-4 py-3 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
               />
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-[11px] font-bold tracking-widest text-gray-700 uppercase">Password</label>
-                <a href="#" className="text-xs text-gray-500 hover:text-gray-900 hover:underline">Forgot password?</a>
+                <label className="block text-[11px] font-bold tracking-widest text-gray-800 uppercase">Password</label>
+                <a href="#" className="text-xs text-gray-600 hover:text-gray-900 hover:underline">Forgot password?</a>
               </div>
               <input
                 type="password"
@@ -103,7 +103,7 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3 text-sm border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
+                className="w-full px-4 py-3 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-colors"
               />
             </div>
 
@@ -117,15 +117,15 @@ const Login = () => {
           </form>
 
           <div className="mt-8 pt-8 border-t border-gray-100 text-center relative">
-            <span className="absolute bg-white px-4 text-[10px] text-gray-400 uppercase tracking-widest -top-2.5 left-1/2 -translate-x-1/2">
+            <span className="absolute bg-white px-4 text-[10px] text-gray-600 uppercase tracking-widest -top-2.5 left-1/2 -translate-x-1/2">
               OR
             </span>
-            <p className="text-sm text-gray-500 mt-4">
+            <p className="text-sm text-gray-600 mt-4">
               Don't have an account? <Link to="/signup" className="text-gray-900 font-semibold hover:underline">Sign Up</Link>
             </p>
           </div>
 
-          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-400 uppercase tracking-widest">
+          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-500 uppercase tracking-widest">
             &copy; 2026 AURAE. QUALITY OVER QUANTITY.
           </div>
         </div>

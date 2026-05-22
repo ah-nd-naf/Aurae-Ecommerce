@@ -77,7 +77,7 @@ const Shop = () => {
                 ref={searchInputRef}
                 type="text"
                 placeholder="SEARCH THE CATALOGUE..."
-                className="w-full bg-neutral-50 border-b-2 border-gray-100 py-4 pl-12 pr-4 text-[11px] uppercase tracking-[0.3em] focus:border-black outline-none transition-all"
+                className="w-full bg-white text-gray-900 placeholder:text-gray-400 border-b-2 border-gray-200 py-4 pl-12 pr-4 text-[11px] uppercase tracking-[0.3em] focus:border-black outline-none transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -144,13 +144,13 @@ const Shop = () => {
           <div className="pt-8 border-t border-gray-100">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-gray-900">Sort By</h3>
             <select 
-              className="w-full bg-transparent border-b border-gray-200 py-2 text-[10px] uppercase tracking-widest outline-none focus:border-black cursor-pointer"
+              className="w-full bg-white text-gray-900 border-b border-gray-300 py-2 px-1 text-[10px] uppercase tracking-widest outline-none focus:border-black cursor-pointer"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              <option value="newest">Newest Arrivals</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
+              <option value="newest" className="text-gray-900 bg-white">Newest Arrivals</option>
+              <option value="price-low" className="text-gray-900 bg-white">Price: Low to High</option>
+              <option value="price-high" className="text-gray-900 bg-white">Price: High to Low</option>
             </select>
           </div>
         </aside>
