@@ -115,7 +115,7 @@ const VerifyOTP = () => {
             </p>
           </div>
 
-          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-500 uppercase tracking-widest">
+          <div className="mt-16 text-center lg:text-left text-[10px] text-gray-600 uppercase tracking-widest">
             &copy; 2026 AURAE. QUALITY OVER QUANTITY.
           </div>
         </div>

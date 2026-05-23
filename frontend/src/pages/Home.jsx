@@ -64,7 +64,7 @@ const Home = () => {
             <h2 className="text-2xl font-serif text-gray-900">The Catalog</h2>
             <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Quality Over Quantity</p>
           </div>
-          <div className="text-[10px] text-gray-400 uppercase tracking-widest">
+          <div className="text-[10px] text-gray-500 uppercase tracking-widest">
             {products.length} Products Found
           </div>
         </div>
@@ -123,7 +123,7 @@ const Home = () => {
           Simple copyright and brand philosophy.
       */}
       <footer className="border-t border-gray-100 py-12 text-center">
-        <p className="text-[10px] text-gray-400 uppercase tracking-[0.4em]">
+        <p className="text-[10px] text-gray-1000 uppercase tracking-[0.4em]">
           © 2026 AURAE — Timeless Minimalism
         </p>
       </footer>
