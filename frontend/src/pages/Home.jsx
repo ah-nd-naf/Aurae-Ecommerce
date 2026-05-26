@@ -62,9 +62,9 @@ const Home = () => {
         <div className="flex justify-between items-end mb-12">
           <div>
             <h2 className="text-2xl font-serif text-gray-900">The Catalog</h2>
-            <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Quality Over Quantity</p>
+            <p className="text-gray-700 text-xs uppercase tracking-widest mt-2 font-medium">Quality Over Quantity</p>
           </div>
-          <div className="text-[10px] text-gray-500 uppercase tracking-widest">
+          <div className="text-[10px] text-gray-700 uppercase tracking-widest font-medium">
             {products.length} Products Found
           </div>
         </div>
@@ -95,7 +95,7 @@ const Home = () => {
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400 group-hover:scale-110 transition-transform duration-700">
+                    <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-600 group-hover:scale-110 transition-transform duration-700">
                       {product.name}
                     </div>
                   )}
@@ -107,7 +107,7 @@ const Home = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-900">{product.name}</h3>
-                    <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-widest">
+                    <p className="text-[10px] text-gray-750 mt-1 uppercase tracking-widest font-semibold">
                       {product.category?.name || 'Essentials'}
                     </p>
                   </div>
@@ -123,7 +123,7 @@ const Home = () => {
           Simple copyright and brand philosophy.
       */}
       <footer className="border-t border-gray-100 py-12 text-center">
-        <p className="text-[10px] text-gray-1000 uppercase tracking-[0.4em]">
+        <p className="text-[10px] text-gray-700 uppercase tracking-[0.4em] font-medium">
           © 2026 AURAE — Timeless Minimalism
         </p>
       </footer>

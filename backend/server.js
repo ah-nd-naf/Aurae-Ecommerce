@@ -14,10 +14,26 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', 
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Allow any localhost origin with any port (e.g., 5173, 5174, 5175, etc.)
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+    
+    // Also allow the configured FRONTEND_URL
+    if (origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'] 
 })); 
+
 
 // JSON Middleware: Allows the server to parse JSON data from the frontend
 app.use(express.json()); 

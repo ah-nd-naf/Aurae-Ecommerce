@@ -173,7 +173,7 @@ const Shop = () => {
                 </div>
 
                 <div className="space-y-2 px-1">
-                  <p className="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-black">{product.category?.name || 'Collection'}</p>
+                  <p className="text-[9px] uppercase tracking-[0.3em] text-gray-600 font-black">{product.category?.name || 'Collection'}</p>
                   <h3 className="font-serif text-xl text-gray-950 uppercase tracking-tight group-hover:italic transition-all duration-300">{product.name}</h3>
                   <p className="text-sm font-bold text-gray-900 tracking-tighter">${product.basePrice}</p>
                 </div>
