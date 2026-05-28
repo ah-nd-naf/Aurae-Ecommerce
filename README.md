@@ -1,66 +1,55 @@
-# Aurae E-Commerce
+# 🪐 Aurae E-Commerce
 
-A premium, minimalist e-commerce application designed for high-end fashion cataloging, featuring verified customer reviews, dynamic variant management, JWT-based security with email OTP verification, and a fully integrated SSLCommerz payment gateway.
+A premium, minimalist e-commerce application designed for high-end fashion cataloging. Built with a decoupled architecture featuring a Vite/React client and an Express/PostgreSQL API, it incorporates verified customer reviews, dynamic variant management, JWT-based security with SMTP OTP verification, and a fully integrated SSLCommerz payment gateway.
 
 ---
 
 ## 🌐 Live Deployments
 
-*   **Frontend (Vercel)**: [https://aurae-ecommerce.vercel.app](https://aurae-ecommerce.vercel.app)
-*   **Backend API (Render)**: [https://aurae-ecommerce.onrender.com](https://aurae-ecommerce.onrender.com)
-
----
-
-## 🌟 Key Features
-
-*   **Secure Authentication & Verification**:
-    *   JWT-based user authentication.
-    *   Signup flows integrated with OTP validation sent directly via SMTP (`Nodemailer`).
-    *   Role-based access control protecting administrative actions.
-*   **Minimalist Frontend UI**:
-    *   Curated layouts built with **React 19**, **Vite**, and **Tailwind CSS v4**.
-    *   Refined micro-animations, glassmorphism design tokens, and smooth responsive layouts.
-    *   Global state management via React Context (`AuthContext`, `CartContext`).
-    *   Slide-out Cart drawer, and dynamic interactive filters.
-*   **Comprehensive Database & Catalog**:
-    *   PostgreSQL database mapping managed via **Prisma ORM**.
-    *   Structured models for `User`, `Category`, `Product`, `ProductVariant`, `Order`, `OrderItem`, and `Review`.
-    *   Seamless transactional migrations and mock data seeding.
-*   **Verified Purchase Review Engine**:
-    *   Anti-spam mechanisms restricting reviews to verified product purchasers only.
-    *   Constraint enforcing a maximum of one review per user per product.
-*   **SSLCommerz Payment Gateway**:
-    *   Seamless integration of the SSLCommerz payment gateway.
-    *   Secure checkout initialization, redirects, and automated IPN/webhooks (`success`, `fail`, `cancel`).
-*   **Admin Dashboard**:
-    *   Comprehensive admin panel allowing inventory management (CRUD for products/variants/categories).
-    *   Real-time order listing and status updates (e.g., `PENDING` ➔ `PROCESSING` ➔ `SHIPPED` ➔ `DELIVERED`).
+*   **Frontend Client (Vercel)**: [https://aurae-ecommerce.vercel.app](https://aurae-ecommerce.vercel.app)
+*   **Backend Server API (Render)**: [https://aurae-ecommerce.onrender.com](https://aurae-ecommerce.onrender.com)
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Backend (Server)
-*   **Runtime Environment**: Node.js (v18+)
-*   **Framework**: Express.js (v5)
-*   **Database ORM**: Prisma Client
-*   **Database engine**: PostgreSQL (hosted on Neon)
-*   **Security**: bcryptjs (Password hashing) & JSON Web Tokens (Session state)
-*   **Communications**: Nodemailer (Email SMTP client)
-*   **Payments**: SSLCommerz LTS
+### Frontend Client
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62B)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 
-### Frontend (Client)
-*   **Bundler & Core**: Vite, React 19
-*   **Styling**: Tailwind CSS v4, PostCSS
-*   **Routing**: React Router DOM (v7)
-*   **HTTP Client**: Axios
-*   **Icons**: Lucide React
+*   **Framework & Bundler**: React 19 + Vite (Fast compilation, asset bundling)
+*   **Styling**: Tailwind CSS v4 & PostCSS (High-contrast typography, glassmorphism UI tokens)
+*   **State Management**: React Context (`AuthContext` for sessions, `CartContext` for cart drawer)
+
+### Backend API
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+
+*   **Runtime & Server**: Node.js (v18+) & Express.js (v5)
+*   **ORM & Database**: Prisma Client connected to PostgreSQL (Hosted on Neon)
+*   **Security & OTP**: `bcryptjs` (passwords), `jsonwebtoken` (auth tokens), `Nodemailer` (SMTP email OTP)
+*   **Payment Gateway**: SSLCommerz LTS API (Redirects, background IPN webhook validation)
 
 ---
 
-## 🗄️ Database Schema & Architecture
+## 🌟 Key Features
 
-The database schema is defined in [schema.prisma](file:///home/ahnaf/Desktop/Trial%20Projects/aurae-ecommerce/backend/prisma/schema.prisma). Below is the relational architecture diagram representing the data models:
+*   🔒 **Secure OTP Authentication**: JWT-based session security combined with email OTP verification during registration.
+*   📐 **Minimalist High-Contrast UI**: Curated, responsive layout, interactive product filters, sliding cart drawer, and sleek micro-animations.
+*   📊 **Relational Database Model**: PostgreSQL tables mapped through Prisma with cascading updates, index optimizations, and database constraints.
+*   ⭐ **Verified Purchaser Review System**: Anti-spam mechanisms restricting review logging to verified purchasers only, enforcing a strict one-review-per-product limit per user.
+*   💳 **SSLCommerz Integration**: Online checkout flow with support for BDT gateway channels, automated transaction verifiers, and callback status handlers.
+*   🛡️ **Admin Inventory Panel**: Role-based access control protecting product creation, category updates, and order journey tracker updates.
+
+---
+
+## 🗄️ Relational Database Schema
+
+The relational database architecture is defined in [schema.prisma](file:///home/ahnaf/Desktop/Trial%20Projects/aurae-ecommerce/backend/prisma/schema.prisma):
 
 ```mermaid
 erDiagram
@@ -140,24 +129,24 @@ erDiagram
 
 ## ⚙️ Environment Configuration
 
-Create a `.env` file in the `backend/` directory based on the following keys:
+Create a `.env` file in the `backend/` directory based on the keys below:
 
 ```env
-# Mailer configuration for SMTP OTP sends
+# Nodemailer SMTP Mailer (used for sending signup validation OTPs)
 EMAIL_USER="your-email@gmail.com"
 EMAIL_PASS="your-app-specific-smtp-password"
 
-# Connection string for your PostgreSQL instance
+# Prisma PostgreSQL connection string
 DATABASE_URL="postgresql://username:password@hostname:port/database?sslmode=require"
 
-# JWT configuration
+# JWT configuration key
 JWT_SECRET="your-secure-jwt-secret-key"
 
-# SSLCommerz sandbox credentials
+# SSLCommerz Sandbox credentials
 STORE_ID="your-sslcommerz-store-id"
 STORE_PASSWORD="your-sslcommerz-store-password"
 
-# Network addresses
+# Server Network addresses
 BACKEND_URL="http://localhost:5000"
 FRONTEND_URL="http://localhost:5173"
 ```
@@ -166,163 +155,122 @@ FRONTEND_URL="http://localhost:5173"
 
 ## 🚀 Installation & Local Development Setup
 
-Follow these steps to set up the project locally.
+Follow these commands to get your local development environment up and running.
 
-### Prerequisites
-*   Node.js (version 18 or above recommended)
-*   A running PostgreSQL database instance (local or Neon/AWS RDS cloud instance)
+### 1. Configure & Launch Database & Backend
 
-### 1. Clone & Set Up Repositories
+1. Navigate to the `backend/` directory and install the packages:
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Create your `.env` configuration file in the `backend/` folder based on the schema above.
+3. Generate the Prisma Client:
+   ```bash
+   npx prisma generate
+   ```
+4. Apply the database migrations:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+5. Seed the database with sample products and categories:
+   ```bash
+   npm run seed
+   ```
+6. Run the backend server in reload/dev mode:
+   ```bash
+   npm run dev
+   ```
 
-First, clone the repository and navigate into the root directory:
-```bash
-cd aurae-ecommerce
-```
+### 2. Configure & Launch Frontend Client
 
-### 2. Configure & Seed the Backend Database
-
-1.  Navigate to the `backend/` directory:
-    ```bash
-    cd backend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Set up your `.env` configuration file in the `backend/` folder (using the keys detailed above).
-4.  Generate Prisma Client:
-    ```bash
-    npx prisma generate
-    ```
-5.  Run the Prisma migrations to create tables in PostgreSQL:
-    ```bash
-    npx prisma migrate dev --name init
-    ```
-6.  Seed the database with default categories, products, and variants:
-    ```bash
-    npm run seed
-    ```
-
-### 3. Spin Up Backend Server
-Run the backend in development mode (starts Node with `nodemon` auto-reload):
-```bash
-npm run dev
-```
-The server will boot up and listen on port `5000` (or the port defined in `.env`).
-
-### 4. Configure & Launch Frontend Client
-
-1.  Open a new terminal session and navigate to the `frontend/` folder:
-    ```bash
-    cd frontend
-    ```
-2.  Install client dependencies:
-    ```bash
-    npm install
-    ```
-3.  Run the client application in development mode:
-    ```bash
-    npm run dev
-    ```
-4.  Open [http://localhost:5173](http://localhost:5173) in your web browser.
+1. Open a new terminal and navigate to the `frontend/` directory:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Run the client dev server:
+   ```bash
+   npm run dev
+   ```
+3. Open [http://localhost:5173](http://localhost:5173) in your web browser.
 
 ---
 
 ## 🔌 API Reference Guide
 
-### 1. Authentication (`/api/auth`)
+### 1. Authentication
+Endpoint prefix: `/api/auth`
 
-*   **`POST /api/auth/signup`**: Creates a new user profile and triggers an OTP verification email to the user.
-    *   *Body*: `{ "name": "John Doe", "email": "john@example.com", "password": "password123" }`
-*   **`POST /api/auth/verify-otp`**: Validates the OTP token emailed during signup.
-    *   *Body*: `{ "email": "john@example.com", "otp": "123456" }`
-*   **`POST /api/auth/login`**: Authenticates user credentials and signs a JWT token.
-    *   *Body*: `{ "email": "john@example.com", "password": "password123" }`
-    *   *Returns*: `{ "token": "JWT_TOKEN", "user": { "id": 1, "name": "John Doe", "email": "john@example.com", "role": "USER" } }`
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/signup` | Public | `{ name, email, password }` | Registers a new user and triggers verification OTP email |
+| `POST` | `/verify-otp` | Public | `{ email, otp }` | Validates the OTP verification token |
+| `POST` | `/login` | Public | `{ email, password }` | Authenticates credentials and returns a JWT token |
 
-### 2. Products Catalog (`/api/products`)
+### 2. Products Catalog
+Endpoint prefix: `/api/products`
 
-*   **`GET /api/products/all`**: Fetch all products with their associated variants and categories. *(Public)*
-*   **`GET /api/products/:id`**: Fetch a single product detail with nested category/variants by database ID. *(Public)*
-*   **`POST /api/products/add`**: Add a new product and create nested variants simultaneously. *(Admin Only)*
-    *   *Headers*: `Authorization: Bearer <TOKEN>`
-    *   *Body*:
-        ```json
-        {
-          "name": "Linen Summer Shirt",
-          "description": "Breathable high-quality casual shirt.",
-          "basePrice": 49.99,
-          "categoryId": 1,
-          "variants": [
-            { "size": "M", "color": "Blue", "stock": 15 },
-            { "size": "L", "color": "Blue", "stock": 20 }
-          ]
-        }
-        ```
-*   **`PUT /api/products/:id`**: Update product attributes (such as price, categories, descriptions). *(Admin Only)*
-*   **`DELETE /api/products/:id`**: Deletes a product. If cascades are enabled, variants are removed automatically. *(Admin Only)*
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/all` | Public | *None* | Lists all catalog items along with variants and category relations |
+| `GET` | `/:id` | Public | *None* | Retrieve product detail by database ID |
+| `POST` | `/add` | Admin | `{ name, description, basePrice, categoryId, variants: [...] }` | Creates a new product and inserts corresponding variants |
+| `PUT` | `/:id` | Admin | `{ name, basePrice, description, ... }` | Updates item detail fields |
+| `DELETE`| `/:id` | Admin | *None* | Deletes the product. Associated variants cascade delete |
 
-### 3. Categories (`/api/categories`)
+### 3. Categories
+Endpoint prefix: `/api/categories`
 
-*   **`GET /api/categories`**: Lists all catalog categories. *(Public)*
-*   **`POST /api/categories`**: Creates a new category entity. *(Admin Only)*
-    *   *Body*: `{ "name": "Outerwear" }`
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/` | Public | *None* | Returns all product categories |
+| `POST` | `/` | Admin | `{ name }` | Registers a new category |
 
-### 4. Orders (`/api/orders`)
+### 4. Orders Ledger
+Endpoint prefix: `/api/orders`
 
-*   **`POST /api/orders`**: Create a new pending order transaction. *(Protected)*
-    *   *Body*:
-        ```json
-        {
-          "items": [
-            { "id": 2, "quantity": 1, "basePrice": 55.00, "size": "M", "color": "Sage" }
-          ],
-          "totalAmount": 55.00
-        }
-        ```
-*   **`GET /api/orders/my-orders`**: Retrieve order history for the authenticated user. *(Protected)*
-*   **`GET /api/orders/all`**: Fetch every order stored in database. *(Admin Only)*
-*   **`PUT /api/orders/:id/status`**: Update the status tag of an order. *(Admin Only)*
-    *   *Body*: `{ "status": "SHIPPED" }`
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/` | User | `{ items: [...], totalAmount }` | Logs a pending transaction request |
+| `GET` | `/my-orders` | User | *None* | Returns order history details of the logged-in user |
+| `GET` | `/all` | Admin | *None* | Returns a complete listing of all store orders |
+| `PUT` | `/:id/status`| Admin | `{ status: "PROCESSING" }` | Updates order tracking milestones |
 
-### 5. Payments (`/api/payment`)
+### 5. Payments (SSLCommerz)
+Endpoint prefix: `/api/payment`
 
-*   **`POST /api/payment/init`**: Prepares and initialises an SSLCommerz gateway URL session. *(Protected)*
-    *   *Body*: `{ "orderId": 5, "totalAmount": 55.00 }`
-    *   *Returns*: `{ "gatewayUrl": "https://sandbox.sslcommerz.com/...redirect-link" }`
-*   **`POST /api/payment/success/:tranId`**: Gateway callback webhook invoked upon successful payment. Redirects the client to payment success state. *(Internal)*
-*   **`POST /api/payment/fail/:tranId`**: Gateway callback webhook invoked upon payment failure or user cancellation. *(Internal)*
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/init` | User | `{ items, totalAmount, customerPhone, address, ... }` | Initiates payment gateway details and yields checkout URL |
+| `POST` | `/success/:tranId` | Webhook | *None* | Payment callback redirect. Adjusts item stock count on success |
+| `POST` | `/fail/:tranId` | Webhook | *None* | Redirect trigger on payment failure |
 
-### 6. Reviews (`/api/reviews`)
+### 6. Product Reviews
+Endpoint prefix: `/api/reviews`
 
-*   **`GET /api/reviews/:productId`**: Publicly fetch review feedback for a product. *(Public)*
-*   **`POST /api/reviews`**: Authenticates and posts reviews. Restricted to users with verified purchases of the product. *(Protected)*
-    *   *Body*: `{ "productId": 2, "rating": 5, "comment": "Excellent texture and shade!" }`
-
-## ☁️ Deployment
-
-This project is configured for cloud deployment with a decoupled architecture (frontend client + backend server):
-
-### Frontend (Vercel)
-*   **Root Directory**: `frontend`
-*   **Build Command**: `vite build` (preset by Vercel)
-*   **Output Directory**: `dist`
-*   **Routing**: Handled dynamically using `vercel.json` rewrites for client-side routing support.
-*   **Environment Variables**: `VITE_API_URL` pointing to the deployed Render backend API (`https://aurae-ecommerce.onrender.com/api`).
-
-### Backend (Render)
-*   **Service Type**: Web Service
-*   **Root Directory**: `backend`
-*   **Runtime**: `Node`
-*   **Build Command**: `npm install && npm run build` (runs `prisma generate` to compile DB client)
-*   **Start Command**: `npm start` (runs `node server.js`)
-*   **Environment Variables**: Configured for Neon Database URL, SSLCommerz credentials, JWT keys, and CORS origin urls (`FRONTEND_URL` and `BACKEND_URL`).
+| Method | Endpoint | Access | Body Params | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/:productId` | Public | *None* | Lists all customer reviews logged for the target product |
+| `POST` | `/` | User | `{ productId, rating, comment }` | Publishes a review. Only verified buyers can submit |
 
 ---
 
-## 🔒 Security Practices
+## ☁️ Deployment Architecture
 
-*   **Credential Hashing**: Uses `bcryptjs` with 10 salt rounds to hash database passwords.
-*   **Payload Authentication**: Protects critical routes using JWT (JSON Web Tokens) inside the HTTP Authorization headers (`Bearer <token>`).
-*   **SQL Injection Guard**: Utilizes Prisma ORM which leverages parameterized database queries natively.
-*   **CORS Configuration**: Restricts origin requests strictly to the authorized client application URL in the server configuration.
+This application runs as a decoupled architecture (separated frontend client and backend server):
+
+### Frontend Hosting (Vercel)
+*   **Subdirectory Root**: `/frontend`
+*   **Build Command**: `vite build`
+*   **Output folder**: `dist`
+*   **Redirect Handling**: Uses `vercel.json` rewrites for SPA client-side routing fallback support.
+*   **Configured Variables**: `VITE_API_URL` pointing to `https://aurae-ecommerce.onrender.com/api`
+
+### Backend Hosting (Render)
+*   **Service Platform**: Web Service
+*   **Subdirectory Root**: `/backend`
+*   **Runtime Environment**: `Node`
+*   **Build Command**: `npm install && npm run build` (triggering Prisma generator compile)
+*   **Start Command**: `npm start`
+*   **Configured Variables**: Database connection URL (`DATABASE_URL`), JWT configs, mailer configs, SSLCommerz keys, and CORS settings (`FRONTEND_URL` and `BACKEND_URL`).

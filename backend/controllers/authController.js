@@ -52,7 +52,10 @@ const signup = async (req, res) => {
 
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ error: "Internal server error during signup" });
+    res.status(500).json({ 
+      error: "Internal server error during signup", 
+      details: error.message 
+    });
   }
 };
 
