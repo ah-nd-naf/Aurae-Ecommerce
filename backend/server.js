@@ -24,8 +24,11 @@ app.use(cors({
     }
     
     // Also allow the configured FRONTEND_URL
-    if (origin === process.env.FRONTEND_URL) {
-      return callback(null, true);
+    if (process.env.FRONTEND_URL) {
+      const normalize = (url) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      if (normalize(origin) === normalize(process.env.FRONTEND_URL)) {
+        return callback(null, true);
+      }
     }
     
     callback(new Error('Not allowed by CORS'));

@@ -4,6 +4,13 @@ A premium, minimalist e-commerce application designed for high-end fashion catal
 
 ---
 
+## 🌐 Live Deployments
+
+*   **Frontend (Vercel)**: [https://aurae-ecommerce.vercel.app](https://aurae-ecommerce.vercel.app)
+*   **Backend API (Render)**: [https://aurae-ecommerce.onrender.com](https://aurae-ecommerce.onrender.com)
+
+---
+
 ## 🌟 Key Features
 
 *   **Secure Authentication & Verification**:
@@ -291,6 +298,25 @@ The server will boot up and listen on port `5000` (or the port defined in `.env`
 *   **`GET /api/reviews/:productId`**: Publicly fetch review feedback for a product. *(Public)*
 *   **`POST /api/reviews`**: Authenticates and posts reviews. Restricted to users with verified purchases of the product. *(Protected)*
     *   *Body*: `{ "productId": 2, "rating": 5, "comment": "Excellent texture and shade!" }`
+
+## ☁️ Deployment
+
+This project is configured for cloud deployment with a decoupled architecture (frontend client + backend server):
+
+### Frontend (Vercel)
+*   **Root Directory**: `frontend`
+*   **Build Command**: `vite build` (preset by Vercel)
+*   **Output Directory**: `dist`
+*   **Routing**: Handled dynamically using `vercel.json` rewrites for client-side routing support.
+*   **Environment Variables**: `VITE_API_URL` pointing to the deployed Render backend API (`https://aurae-ecommerce.onrender.com/api`).
+
+### Backend (Render)
+*   **Service Type**: Web Service
+*   **Root Directory**: `backend`
+*   **Runtime**: `Node`
+*   **Build Command**: `npm install && npm run build` (runs `prisma generate` to compile DB client)
+*   **Start Command**: `npm start` (runs `node server.js`)
+*   **Environment Variables**: Configured for Neon Database URL, SSLCommerz credentials, JWT keys, and CORS origin urls (`FRONTEND_URL` and `BACKEND_URL`).
 
 ---
 
