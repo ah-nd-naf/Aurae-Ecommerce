@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext'; // To get user name/email
-import axios from 'axios';
+import api from '../api/axios';
 
 /**
  * Checkout Component
@@ -40,7 +40,7 @@ const Checkout = () => {
       const token = localStorage.getItem('aurae_token');
 
       // 1. Call our new Backend 'init' route
-      const response = await axios.post('http://localhost:5000/api/payment/init', {
+      const response = await api.post('/payment/init', {
         items: cart, // send cart items to backend
         totalAmount: cartTotal,
         customerName: user?.name || "Customer",

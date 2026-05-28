@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { Star, MessageSquare, ShieldCheck, Loader2 } from 'lucide-react';
 
 /**
@@ -19,7 +19,7 @@ const ReviewsSection = ({ productId }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+        const response = await api.get(`/reviews/${productId}`);
         setReviews(response.data);
       } catch (err) {
         console.error("Fetch reviews error:", err);
@@ -40,8 +40,8 @@ const ReviewsSection = ({ productId }) => {
 
     try {
       const token = localStorage.getItem('aurae_token');
-      const response = await axios.post(
-        'http://localhost:5000/api/reviews',
+      const response = await api.post(
+        '/reviews',
         { productId, rating, comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
