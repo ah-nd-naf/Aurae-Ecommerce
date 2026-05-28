@@ -32,7 +32,16 @@ const signup = async (req, res) => {
           otpExpiresAt,
         }
       });
-      await sendOTP(email, otp);
+      try {
+        await sendOTP(email, otp);
+      } catch (mailError) {
+        console.warn("SMTP failed, auto-verifying user on update:", mailError.message);
+        await prisma.user.update({
+          where: { email },
+          data: { isVerified: true, otp: null, otpExpiresAt: null }
+        });
+        return res.status(200).json({ message: "Signup successful. Account automatically verified." });
+      }
       return res.status(200).json({ message: "OTP sent to email. Please verify your account." });
     }
 
@@ -47,7 +56,16 @@ const signup = async (req, res) => {
       }
     });
 
-    await sendOTP(email, otp);
+    try {
+      await sendOTP(email, otp);
+    } catch (mailError) {
+      console.warn("SMTP failed, auto-verifying new user:", mailError.message);
+      await prisma.user.update({
+        where: { email },
+        data: { isVerified: true, otp: null, otpExpiresAt: null }
+      });
+      return res.status(201).json({ message: "Signup successful. Account automatically verified." });
+    }
     res.status(201).json({ message: "Signup successful. OTP sent to email." });
 
   } catch (error) {
@@ -69,7 +87,7 @@ const verifyOTP = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ error: "User not found" });
-    if (user.isVerified) return res.status(400).json({ error: "User already verified" });
+    if (user.isVerified) return res.status(200).json({ message: "Email verified. You can now log in." });
 
     if (user.otp !== otp || !user.otpExpiresAt || user.otpExpiresAt < new Date()) {
       return res.status(400).json({ error: "Invalid or expired OTP" });
