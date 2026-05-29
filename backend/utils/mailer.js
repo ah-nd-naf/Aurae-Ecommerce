@@ -32,7 +32,7 @@ const sendOTP = async (email, otp) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: 'Aurae <noreply@aurae.com>',
+      from: 'Aurae <onboarding@resend.dev>',
       to: [email],
       subject: 'Verify Your Aurae Account',
       html: htmlContent
