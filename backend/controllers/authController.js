@@ -22,62 +22,32 @@ const signup = async (req, res) => {
       if (existingUser.isVerified) {
         return res.status(400).json({ error: "Email is already registered and verified." });
       }
-      // Update unverified user
+      // Update the unverified user with a fresh OTP
       await prisma.user.update({
         where: { email },
-        data: {
-          password: hashedPassword,
-          name, // Store plain text name
-          otp,
-          otpExpiresAt,
-        }
+        data: { password: hashedPassword, name, otp, otpExpiresAt }
       });
-      try {
-        await sendOTP(email, otp);
-      } catch (mailError) {
-        console.warn("SMTP failed, auto-verifying user on update:", mailError.message);
-        await prisma.user.update({
-          where: { email },
-          data: { isVerified: true, otp: null, otpExpiresAt: null }
-        });
-        return res.status(200).json({ message: "Signup successful. Account automatically verified." });
-      }
+      await sendOTP(email, otp);
       return res.status(200).json({ message: "OTP sent to email. Please verify your account." });
     }
 
-    // CREATE NEW USER - Fixed: added name here
+    // Create new user
     await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name, // Store plain text name
-        otp,
-        otpExpiresAt,
-      }
+      data: { email, password: hashedPassword, name, otp, otpExpiresAt }
     });
 
-    try {
-      await sendOTP(email, otp);
-    } catch (mailError) {
-      console.warn("SMTP failed, auto-verifying new user:", mailError.message);
-      await prisma.user.update({
-        where: { email },
-        data: { isVerified: true, otp: null, otpExpiresAt: null }
-      });
-      return res.status(201).json({ message: "Signup successful. Account automatically verified." });
-    }
+    await sendOTP(email, otp);
     res.status(201).json({ message: "Signup successful. OTP sent to email." });
 
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ 
-      error: "Internal server error during signup", 
+      error: "Failed to create account. Please try again.",
       details: error.message 
     });
   }
 };
 
-// verifyOTP remains the same as your version...
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -87,10 +57,10 @@ const verifyOTP = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ error: "User not found" });
-    if (user.isVerified) return res.status(200).json({ message: "Email verified. You can now log in." });
+    if (user.isVerified) return res.status(400).json({ error: "Account is already verified. Please log in." });
 
     if (user.otp !== otp || !user.otpExpiresAt || user.otpExpiresAt < new Date()) {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
+      return res.status(400).json({ error: "Invalid or expired OTP. Please try again." });
     }
 
     await prisma.user.update({
@@ -103,6 +73,7 @@ const verifyOTP = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 const login = async (req, res) => {
   try {
