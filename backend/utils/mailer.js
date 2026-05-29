@@ -1,7 +1,9 @@
 const sendOTP = async (email, otp) => {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  if (!apiKey) {
-    throw new Error("SENDGRID_API_KEY is not configured in the environment variables.");
+  const scriptUrl = process.env.GMAIL_SCRIPT_URL;
+  const scriptToken = process.env.GMAIL_SCRIPT_TOKEN;
+
+  if (!scriptUrl || !scriptToken) {
+    throw new Error("GMAIL_SCRIPT_URL or GMAIL_SCRIPT_TOKEN is not configured in the environment variables.");
   }
 
   const htmlContent = `
@@ -25,35 +27,27 @@ const sendOTP = async (email, otp) => {
     </div>
   `;
 
-  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+  const response = await fetch(scriptUrl, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      personalizations: [
-        {
-          to: [{ email: email }]
-        }
-      ],
-      from: {
-        email: process.env.EMAIL_USER,
-        name: 'Aurae Support'
-      },
+      token: scriptToken,
+      to: email,
       subject: 'Verify Your Aurae Account',
-      content: [
-        {
-          type: 'text/html',
-          value: htmlContent
-        }
-      ]
+      html: htmlContent
     })
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to send email via SendGrid: ${errorText}`);
+    throw new Error(`Failed to send email via Google Apps Script: ${errorText}`);
+  }
+
+  const result = await response.json();
+  if (result.error) {
+    throw new Error(`Google Apps Script returned an error: ${result.error}`);
   }
 
   return { success: true };
