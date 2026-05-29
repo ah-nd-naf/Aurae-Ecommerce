@@ -31,7 +31,7 @@ A premium, minimalist e-commerce application designed for high-end fashion catal
 
 *   **Runtime & Server**: Node.js (v18+) & Express.js (v5)
 *   **ORM & Database**: Prisma Client connected to PostgreSQL (Hosted on Neon)
-*   **Security & OTP**: `bcryptjs` (passwords), `jsonwebtoken` (auth tokens), `Resend API` (Verification email OTP)
+*   **Security & OTP**: `bcryptjs` (passwords), `jsonwebtoken` (auth tokens), `SendGrid API` (Verification email OTP)
 *   **Payment Gateway**: SSLCommerz LTS API (Redirects, background IPN webhook validation)
 
 ---
@@ -132,8 +132,8 @@ erDiagram
 Create a `.env` file in the `backend/` directory based on the keys below:
 
 ```env
-# Resend API Key (used for sending signup validation OTPs)
-RESEND_API_KEY="re_your-resend-api-key"
+# SendGrid API Key (used for sending signup validation OTPs)
+SENDGRID_API_KEY="SG.your-sendgrid-api-key"
 
 # Prisma PostgreSQL connection string
 DATABASE_URL="postgresql://username:password@hostname:port/database?sslmode=require"
@@ -272,4 +272,4 @@ This application runs as a decoupled architecture (separated frontend client and
 *   **Runtime Environment**: `Node`
 *   **Build Command**: `npm install && npm run build` (triggering Prisma generator compile)
 *   **Start Command**: `npm start`
-*   **Configured Variables**: Database connection URL (`DATABASE_URL`), JWT configs, Resend API key (`RESEND_API_KEY`), SSLCommerz keys, and CORS settings (`FRONTEND_URL` and `BACKEND_URL`).
+*   **Configured Variables**: Database connection URL (`DATABASE_URL`), JWT configs, SendGrid API key (`SENDGRID_API_KEY`), SSLCommerz keys, and CORS settings (`FRONTEND_URL` and `BACKEND_URL`).

@@ -1,7 +1,7 @@
 const sendOTP = async (email, otp) => {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.SENDGRID_API_KEY;
   if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured in the environment variables.");
+    throw new Error("SENDGRID_API_KEY is not configured in the environment variables.");
   }
 
   const htmlContent = `
@@ -25,26 +25,38 @@ const sendOTP = async (email, otp) => {
     </div>
   `;
 
-  const response = await fetch('https://api.resend.com/emails', {
+  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: 'Aurae <onboarding@resend.dev>',
-      to: [email],
+      personalizations: [
+        {
+          to: [{ email: email }]
+        }
+      ],
+      from: {
+        email: process.env.EMAIL_USER,
+        name: 'Aurae Support'
+      },
       subject: 'Verify Your Aurae Account',
-      html: htmlContent
+      content: [
+        {
+          type: 'text/html',
+          value: htmlContent
+        }
+      ]
     })
   });
 
   if (!response.ok) {
-    const errorBody = await response.json();
-    throw new Error(errorBody.message || `Failed to send email via Resend: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to send email via SendGrid: ${errorText}`);
   }
 
-  return response.json();
+  return { success: true };
 };
 
 export { sendOTP };

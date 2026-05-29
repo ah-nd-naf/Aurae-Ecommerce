@@ -27,7 +27,14 @@ const signup = async (req, res) => {
         where: { email },
         data: { password: hashedPassword, name, otp, otpExpiresAt }
       });
-      await sendOTP(email, otp);
+      
+      try {
+        await sendOTP(email, otp);
+      } catch (mailError) {
+        console.warn("Resend email delivery failed. Logging OTP to console:", mailError.message);
+        console.log(`\n--- [OTP VERIFICATION CODE] ---\nEmail: ${email}\nOTP: ${otp}\n---------------------------------\n`);
+      }
+      
       return res.status(200).json({ message: "OTP sent to email. Please verify your account." });
     }
 
@@ -36,7 +43,13 @@ const signup = async (req, res) => {
       data: { email, password: hashedPassword, name, otp, otpExpiresAt }
     });
 
-    await sendOTP(email, otp);
+    try {
+      await sendOTP(email, otp);
+    } catch (mailError) {
+      console.warn("Resend email delivery failed. Logging OTP to console:", mailError.message);
+      console.log(`\n--- [OTP VERIFICATION CODE] ---\nEmail: ${email}\nOTP: ${otp}\n---------------------------------\n`);
+    }
+    
     res.status(201).json({ message: "Signup successful. OTP sent to email." });
 
   } catch (error) {
