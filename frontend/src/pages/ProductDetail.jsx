@@ -44,7 +44,7 @@ const ProductDetail = () => {
   const uniqueColors = [...new Set(product.variants?.map(v => v.color))];
 
   return (
-    <div className="max-w-7xl mx-auto px-8 py-12">
+    <div className="max-w-7xl mx-auto px-8 py-12 animate-fade-in-up">
       {/* Back Navigation */}
       <button 
         onClick={() => navigate(-1)} 
@@ -55,12 +55,12 @@ const ProductDetail = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         {/* Left: Dynamic Product Image */}
-        <div className="aspect-[3/4] bg-neutral-100 overflow-hidden relative">
+        <div className="aspect-[3/4] bg-neutral-100 overflow-hidden relative animate-scale-in">
           {product.imageUrl ? (
             <img 
               src={product.imageUrl} 
               alt={product.name} 
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-all duration-700 hover:scale-105"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-neutral-400 uppercase tracking-widest text-[10px]">

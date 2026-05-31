@@ -94,7 +94,7 @@ const Shop = () => {
 
       <div className="flex flex-col lg:flex-row gap-16">
         {/* Sidebar Filters */}
-        <aside className="w-full lg:w-64 space-y-12">
+        <aside className="w-full lg:w-64 space-y-12 animate-fade-in">
           
           {/* Categories */}
           <div>
@@ -105,7 +105,7 @@ const Shop = () => {
               <li>
                 <button 
                   onClick={() => setActiveCategory('All')}
-                  className={`text-[10px] uppercase tracking-[0.2em] transition-all ${activeCategory === 'All' ? 'font-black border-b-2 border-black' : 'text-gray-400 hover:text-black'}`}
+                  className={`text-[10px] uppercase tracking-[0.2em] transition-all relative pb-1 ${activeCategory === 'All' ? 'font-black text-black border-b-2 border-black' : 'text-gray-400 hover:text-black'}`}
                 >
                   All Archive
                 </button>
@@ -114,7 +114,7 @@ const Shop = () => {
                 <li key={cat.id}>
                   <button 
                     onClick={() => setActiveCategory(cat.name)}
-                    className={`text-[10px] uppercase tracking-[0.2em] transition-all ${activeCategory === cat.name ? 'font-black border-b-2 border-black' : 'text-gray-400 hover:text-black'}`}
+                    className={`text-[10px] uppercase tracking-[0.2em] transition-all relative pb-1 ${activeCategory === cat.name ? 'font-black text-black border-b-2 border-black' : 'text-gray-400 hover:text-black'}`}
                   >
                     {cat.name}
                   </button>
@@ -122,7 +122,7 @@ const Shop = () => {
               ))}
             </ul>
           </div>
-
+ 
           {/* Price Range */}
           <div className="pt-8 border-t border-gray-100">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-gray-900 flex items-center gap-2">
@@ -139,7 +139,7 @@ const Shop = () => {
               <span className="text-black bg-gray-100 px-2 py-1 rounded-sm border border-gray-200">Up to ${maxPrice}</span>
             </div>
           </div>
-
+ 
           {/* Sort */}
           <div className="pt-8 border-t border-gray-100">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-gray-900">Sort By</h3>
@@ -154,12 +154,17 @@ const Shop = () => {
             </select>
           </div>
         </aside>
-
+ 
         {/* Product Grid */}
         <main className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
-            {filteredProducts.map((product) => (
-              <Link to={`/product/${product.id}`} key={product.id} className="group block">
+            {filteredProducts.map((product, index) => (
+              <Link 
+                to={`/product/${product.id}`} 
+                key={`${product.id}-${activeCategory}-${sortBy}`} 
+                className="group block opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${(index % 12) * 60}ms` }}
+              >
                 <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-8 border border-transparent group-hover:border-gray-200 transition-all duration-500">
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000" />

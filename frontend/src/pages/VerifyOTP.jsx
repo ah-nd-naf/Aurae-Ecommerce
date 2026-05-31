@@ -50,11 +50,11 @@ const VerifyOTP = () => {
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left Column - Image & Overlay */}
-      <div className="hidden lg:flex w-1/2 relative bg-neutral-100">
+      <div className="hidden lg:flex w-1/2 relative bg-neutral-100 overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=800&auto=format&fit=crop"
           alt="Fashion Model"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover animate-scale-in"
         />
         <div className="absolute inset-0 bg-black/40" />
         
@@ -68,7 +68,7 @@ const VerifyOTP = () => {
 
       {/* Right Column - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md animate-fade-in-up">
           <h2 className="text-2xl font-serif tracking-widest text-center mb-10 lg:hidden">AURAE</h2>
 
           <h1 className="text-4xl font-serif text-gray-900 mb-2">Verify Your Email</h1>

@@ -77,13 +77,13 @@ const Checkout = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-8 py-24">
+    <div className="max-w-6xl mx-auto px-8 py-24 animate-fade-in-up">
       <h1 className="text-[14px] uppercase tracking-[0.6em] mb-16 text-center italic font-serif">Secure Checkout</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
         
         {/* Left Section: Shipping Form (7 Columns) */}
-        <div className="lg:col-span-7 space-y-12">
+        <div className="lg:col-span-7 space-y-12 animate-fade-in">
           <section>
             <h2 className="text-[10px] uppercase tracking-[0.3em] font-bold border-b pb-4 mb-8">Shipping Information</h2>
             <form className="space-y-6">
@@ -130,7 +130,7 @@ const Checkout = () => {
         </div>
 
         {/* Right Section: Order Summary & Pay Button (5 Columns) */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 animate-scale-in">
           <div className="bg-neutral-50 p-10 sticky top-32 border border-gray-100">
             <h2 className="text-[10px] uppercase tracking-[0.3em] font-bold mb-8">Summary</h2>
             

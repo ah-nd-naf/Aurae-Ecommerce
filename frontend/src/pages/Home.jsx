@@ -64,9 +64,9 @@ const Home = () => {
         <img 
           src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=2000" 
           alt="Aurae Collection"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 animate-scale-in"
         />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-6">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-6 animate-fade-in-up">
           <h2 className="text-[10px] uppercase tracking-[0.5em] mb-4 font-bold">New Arrivals</h2>
           <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-center">Essential Aesthetics</h1>
           <button 
@@ -77,7 +77,7 @@ const Home = () => {
           </button>
         </div>
       </section>
-
+ 
       {/* 2. DYNAMIC CATALOG SECTION (Sectors Layout) */}
       <main id="catalog" className="max-w-7xl mx-auto px-6 py-24 space-y-32">
         {loading ? (
@@ -94,7 +94,7 @@ const Home = () => {
             const hasMore = allCategoryItems.length > currentLimit;
 
             return (
-              <section key={categoryName} className="animate-in fade-in duration-700">
+              <section key={categoryName} className="animate-fade-in">
                 
                 {/* Sector Header */}
                 <div className="flex justify-between items-end mb-12 border-b-2 border-gray-900 pb-4">
@@ -108,11 +108,16 @@ const Home = () => {
                     View Full Catalog
                   </Link>
                 </div>
-
+ 
                 {/* Sector Grid (Strictly 3 Columns) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-                  {visibleItems.map((product) => (
-                    <Link to={`/product/${product.id}`} key={product.id} className="group block">
+                  {visibleItems.map((product, index) => (
+                    <Link 
+                      to={`/product/${product.id}`} 
+                      key={product.id} 
+                      className="group block opacity-0 animate-fade-in-up"
+                      style={{ animationDelay: `${index * 80}ms` }}
+                    >
                       
                       {/* High-Contrast Image Card */}
                       <div className="relative aspect-[3/4] overflow-hidden bg-neutral-50 mb-6 transition-all duration-500 rounded-sm">
