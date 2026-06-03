@@ -12,8 +12,8 @@ import reviewRoutes from './routes/reviewRoutes.js'; // new review routes
 
 const app = express();
 
-// Middleware
-app.use(cors({
+// CORS Configuration Options
+const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, curl, or server-to-server)
     if (!origin) return callback(null, true);
@@ -35,7 +35,21 @@ app.use(cors({
   },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'] 
-})); 
+};
+
+// Apply CORS globally except for the SSLCommerz payment callback routes
+app.use((req, res, next) => {
+  const bypassPaths = [
+    '/api/payment/success',
+    '/api/payment/fail',
+    '/api/payment/cancel',
+    '/api/payment/ipn'
+  ];
+  if (bypassPaths.some(path => req.path.startsWith(path))) {
+    return next();
+  }
+  cors(corsOptions)(req, res, next);
+}); 
 
 
 // JSON Middleware: Allows the server to parse JSON data from the frontend
